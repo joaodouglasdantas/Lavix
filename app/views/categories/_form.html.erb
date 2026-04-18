@@ -18,10 +18,16 @@
 
     <div>
       <%= f.label :color, class: "form-label" %>
-      <div class="flex items-center gap-3">
-        <%= f.color_field :color, class: "h-12 w-16 rounded-lg bg-ink-700 border border-ink-500 cursor-pointer" %>
-        <%= f.text_field :color, class: "form-input font-mono", pattern: "#[0-9A-Fa-f]{6}",
-              placeholder: "#FF6B00", maxlength: 7 %>
+      <div class="flex items-center gap-3" data-controller="color-picker">
+        <%= f.color_field :color,
+              class: "h-12 w-16 rounded-lg bg-ink-700 border border-ink-500 cursor-pointer",
+              data: { color_picker_target: "picker", action: "input->color-picker#pickerChanged" } %>
+        <%= f.text_field :color,
+              class: "form-input font-mono",
+              pattern: "#[0-9A-Fa-f]{6}",
+              placeholder: "#FF6B00",
+              maxlength: 7,
+              data: { color_picker_target: "text", action: "input->color-picker#textChanged" } %>
       </div>
       <p class="form-hint">Use o seletor ou digite o código hexadecimal (#RRGGBB).</p>
     </div>
