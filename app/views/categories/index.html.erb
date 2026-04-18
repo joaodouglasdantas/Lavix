@@ -1,0 +1,47 @@
+<% content_for :title, "Categorias — Lavix" %>
+
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-3xl">Categorias</h1>
+    <p class="text-ink-200 text-sm mt-1">Personalize cada categoria com uma cor para identificar rapidamente nos relatórios.</p>
+  </div>
+  <%= link_to "Nova categoria", new_category_path, class: "btn-primary" %>
+</div>
+
+<% if @categories.any? %>
+  <div class="card p-0 overflow-hidden">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th class="w-40">Cor</th>
+          <th class="w-40 text-right">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @categories.each do |category| %>
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                <%= category_dot(category, size: 12) %>
+                <%= link_to category.name, category_path(category), class: "link-neon font-medium" %>
+              </div>
+            </td>
+            <td class="font-mono text-xs text-ink-200"><%= category.color %></td>
+            <td class="text-right space-x-2">
+              <%= link_to "Editar", edit_category_path(category), class: "btn-secondary text-xs py-1 px-2" %>
+              <%= button_to "Excluir", category_path(category), method: :delete,
+                    class: "btn-danger text-xs py-1 px-2 inline-flex",
+                    data: { turbo_confirm: "Excluir esta categoria?" }, form: { class: "inline" } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <div class="card text-center py-16">
+    <p class="text-ink-200">Você ainda não tem categorias.</p>
+    <%= link_to "Criar minha primeira categoria", new_category_path, class: "btn-primary mt-4" %>
+  </div>
+<% end %>

@@ -1,0 +1,56 @@
+pt-BR:
+  app:
+    name: "Lavix"
+    tagline: "Dados em decisões. Suas finanças, seu controle."
+
+  navigation:
+    dashboard: "Dashboard"
+    categories: "Categorias"
+    transactions: "Lançamentos"
+    sign_out: "Sair"
+    sign_in: "Entrar"
+    sign_up: "Criar conta"
+
+  actions:
+    new: "Novo"
+    edit: "Editar"
+    destroy: "Excluir"
+    save: "Salvar"
+    cancel: "Cancelar"
+    back: "Voltar"
+    confirm_destroy: "Tem certeza que deseja excluir?"
+
+  dashboard:
+    title: "Visão Geral"
+    total_income: "Receitas do mês"
+    total_expense: "Despesas do mês"
+    balance: "Saldo do mês"
+    expenses_by_category: "Despesas por categoria"
+    monthly_comparison: "Receitas x Despesas (12 meses)"
+    comparison_table: "Comparativo mensal"
+    month: "Mês"
+    empty_state: "Nenhum lançamento ainda. Comece cadastrando suas primeiras categorias e lançamentos."
+
+  activerecord:
+    models:
+      user: "Usuário"
+      category: "Categoria"
+      transaction: "Lançamento"
+    attributes:
+      user:
+        email: "E-mail"
+        password: "Senha"
+        password_confirmation: "Confirmação de senha"
+      category:
+        name: "Nome"
+        color: "Cor"
+      transaction:
+        amount: "Valor"
+        kind: "Tipo"
+        description: "Descrição"
+        date: "Data"
+        category: "Categoria"
+
+  transaction_kinds:
+    income: "Receita"
+    expense: "Despesa"
