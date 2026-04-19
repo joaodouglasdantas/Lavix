@@ -36,6 +36,7 @@ services:
   css:
     build: .
     command: bin/rails tailwindcss:watch
+    restart: unless-stopped
     volumes:
       - .:/app
       - bundle_cache:/usr/local/bundle
@@ -45,8 +46,8 @@ services:
   mailhog:
     image: mailhog/mailhog
     ports:
-      - "1025:1025"   # SMTP — Rails envia para cá
-      - "8025:8025"   # Interface web para ver os e-mails
+      - "1025:1025"
+      - "8025:8025"
 
 volumes:
   postgres_data:
