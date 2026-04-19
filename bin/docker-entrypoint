@@ -2,6 +2,9 @@
 
 echo "=== Starting Lavix ==="
 
+# Garante que os diretórios temporários existem
+mkdir -p tmp/pids tmp/sockets log
+
 # Remove PID antigo caso o processo tenha morrido de forma bruta
 if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
