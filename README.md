@@ -69,8 +69,6 @@ Acesse a caixa de entrada local em: **`http://localhost:8025`**
 
 O Mailhog sobe automaticamente com o `docker compose up`. Qualquer e-mail disparado pelo app aparece lá em tempo real, exatamente como o usuário receberia.
 
-> Para e-mails chegarem de verdade em produção, configure um serviço SMTP real (ex: Resend, SendGrid) nas variáveis de ambiente.
-
 ## Visualizando usuários cadastrados
 
 ### Via Rails console
