@@ -5,14 +5,4 @@ if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
 fi
 
-# Instala gems que possam estar faltando (útil em dev)
-bundle check || bundle install
-
-# Prepara o banco: cria + migra automaticamente
-./bin/rails db:prepare
-
-# Compila o CSS do Tailwind antes de subir o servidor
-# (o css service faz o watch depois, mas o build inicial precisa acontecer aqui)
-./bin/rails tailwindcss:build
-
 exec "$@"

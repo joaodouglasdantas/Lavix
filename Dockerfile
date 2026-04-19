@@ -24,6 +24,9 @@ COPY . .
 # Garante que scripts de bin/ são executáveis
 RUN chmod +x bin/* 2>/dev/null || true
 
+# Compila o CSS do Tailwind (fase de build, não em runtime)
+RUN RAILS_ENV=production bundle exec rails tailwindcss:build
+
 # Porta exposta pela aplicação Rails
 EXPOSE 3000
 
