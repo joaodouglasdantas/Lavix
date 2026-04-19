@@ -11,7 +11,7 @@
     <dt class="text-ink-200">Categoria</dt>   <dd class="col-span-2 flex items-center gap-2"><%= category_dot(@transaction.category) %> <%= @transaction.category.name %></dd>
     <dt class="text-ink-200">Descrição</dt>   <dd class="col-span-2"><%= @transaction.description.presence || "—" %></dd>
   </dl>
-  <div class="mt-6 space-x-2">
+  <div class="mt-6 flex flex-wrap gap-2">
     <%= link_to "Editar", edit_transaction_path(@transaction), class: "btn-secondary" %>
     <%= link_to "Voltar", transactions_path, class: "btn-ghost" %>
   </div>
