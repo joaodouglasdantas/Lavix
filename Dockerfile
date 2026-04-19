@@ -24,7 +24,9 @@ COPY . .
 # Garante que scripts de bin/ são executáveis
 RUN chmod +x bin/* 2>/dev/null || true
 
-# Compila assets para produção (inclui Tailwind + Propshaft sweep para public/)
+# 1. Compila o Tailwind CSS → app/assets/builds/application.css
+RUN RAILS_ENV=production SECRET_KEY_BASE=build_placeholder bundle exec rails tailwindcss:build
+# 2. Propshaft varre os assets e cria public/assets/ com manifesto
 RUN RAILS_ENV=production SECRET_KEY_BASE=build_placeholder bundle exec rails assets:precompile
 
 # Porta exposta pela aplicação Rails
