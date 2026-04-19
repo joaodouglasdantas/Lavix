@@ -68,13 +68,52 @@
     @apply w-full text-sm text-left border-collapse;
   }
   .table th {
-    @apply text-ink-200 font-medium uppercase text-xs tracking-widest border-b border-ink-600 px-4 py-3;
+    @apply text-ink-200 font-medium uppercase text-xs tracking-widest border-b border-ink-600 px-4 py-3 whitespace-nowrap;
   }
   .table td {
     @apply border-b border-ink-700 px-4 py-3 text-ink-50;
   }
   .table tr:hover td {
     @apply bg-ink-700/50;
+  }
+
+  /* Tabela com colunas fixas + scroll horizontal em telas pequenas */
+  .table-auto-fixed {
+    width: 100%;
+    table-layout: fixed;
+  }
+  .table-scroll-wrapper {
+    overflow-x: auto;
+  }
+
+  /* Célula com texto truncado + tooltip nativo no hover */
+  .cell-truncate {
+    max-width: 0;
+  }
+  .cell-truncate > * {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
+  }
+
+  /* Versão flex (para células com ícone + texto) */
+  .cell-truncate-flex {
+    max-width: 0;
+  }
+  .cell-truncate-flex > .inner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .cell-truncate-flex > .inner > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: help;
   }
 
   /* Badges */

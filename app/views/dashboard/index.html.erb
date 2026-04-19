@@ -91,15 +91,21 @@
     </div>
     <ul class="divide-y divide-ink-700">
       <% @recent_transactions.each do |t| %>
-        <li class="py-3 flex items-center justify-between">
-          <div class="flex items-center gap-3">
+        <li class="py-3 flex items-center justify-between gap-4 min-w-0">
+          <div class="flex items-center gap-3 min-w-0">
             <%= category_dot(t.category) %>
-            <div>
-              <div class="text-ink-50 text-sm font-medium"><%= t.description.presence || t.category.name %></div>
-              <div class="text-xs text-ink-200"><%= l(t.date, format: :long) %> · <%= t.category.name %></div>
+            <div class="min-w-0">
+              <div class="text-ink-50 text-sm font-medium truncate cursor-help"
+                   title="<%= t.description.presence || t.category.name %>">
+                <%= t.description.presence || t.category.name %>
+              </div>
+              <div class="text-xs text-ink-200 truncate">
+                <%= l(t.date, format: :long) %> ·
+                <span class="cursor-help" title="<%= t.category.name %>"><%= t.category.name %></span>
+              </div>
             </div>
           </div>
-          <div class="font-mono text-sm <%= t.income? ? 'text-emerald-300' : 'text-red-300' %>">
+          <div class="font-mono text-sm whitespace-nowrap flex-shrink-0 <%= t.income? ? 'text-emerald-300' : 'text-red-300' %>">
             <%= t.income? ? "+" : "−" %> <%= brl(t.amount) %>
           </div>
         </li>

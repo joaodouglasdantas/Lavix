@@ -36,46 +36,60 @@
 
 <% if @transactions.any? %>
   <div class="card p-0 overflow-hidden">
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Descrição</th>
-          <th>Categoria</th>
-          <th>Tipo</th>
-          <th class="text-right">Valor</th>
-          <th class="w-32 text-right">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @transactions.each do |t| %>
+    <div class="table-scroll-wrapper">
+      <table class="table table-auto-fixed">
+        <colgroup>
+          <col style="width:150px">
+          <col>
+          <col style="width:140px">
+          <col style="width:90px">
+          <col style="width:110px">
+          <col style="width:110px">
+        </colgroup>
+        <thead>
           <tr>
-            <td class="whitespace-nowrap"><%= l(t.date, format: :long) %></td>
-            <td><%= t.description.presence || "—" %></td>
-            <td>
-              <div class="flex items-center gap-2">
-                <%= category_dot(t.category) %>
-                <span><%= t.category.name %></span>
-              </div>
-            </td>
-            <td>
-              <span class="<%= t.income? ? 'badge-income' : 'badge-expense' %>">
-                <%= t.income? ? "Receita" : "Despesa" %>
-              </span>
-            </td>
-            <td class="text-right font-mono <%= t.income? ? 'text-emerald-300' : 'text-red-300' %>">
-              <%= t.income? ? "+" : "−" %> <%= brl(t.amount) %>
-            </td>
-            <td class="text-right space-x-1 whitespace-nowrap">
-              <%= link_to "Editar", edit_transaction_path(t), class: "btn-secondary text-xs py-1 px-2" %>
-              <%= button_to "×", transaction_path(t), method: :delete,
-                    class: "btn-danger text-xs py-1 px-2 inline-flex",
-                    data: { turbo_confirm: "Excluir lançamento?" }, form: { class: "inline" } %>
-            </td>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Categoria</th>
+            <th>Tipo</th>
+            <th class="text-right">Valor</th>
+            <th class="text-right">Ações</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @transactions.each do |t| %>
+            <tr>
+              <td class="whitespace-nowrap text-sm"><%= l(t.date, format: :long) %></td>
+              <td class="cell-truncate">
+                <span title="<%= t.description.presence || '—' %>">
+                  <%= t.description.presence || "—" %>
+                </span>
+              </td>
+              <td class="cell-truncate-flex">
+                <div class="inner">
+                  <%= category_dot(t.category) %>
+                  <span title="<%= t.category.name %>"><%= t.category.name %></span>
+                </div>
+              </td>
+              <td>
+                <span class="<%= t.income? ? 'badge-income' : 'badge-expense' %>">
+                  <%= t.income? ? "Receita" : "Despesa" %>
+                </span>
+              </td>
+              <td class="text-right font-mono whitespace-nowrap <%= t.income? ? 'text-emerald-300' : 'text-red-300' %>">
+                <%= t.income? ? "+" : "−" %> <%= brl(t.amount) %>
+              </td>
+              <td class="text-right whitespace-nowrap space-x-1">
+                <%= link_to "Editar", edit_transaction_path(t), class: "btn-secondary text-xs py-1 px-2" %>
+                <%= button_to "×", transaction_path(t), method: :delete,
+                      class: "btn-danger text-xs py-1 px-2 inline-flex",
+                      data: { turbo_confirm: "Excluir lançamento?" }, form: { class: "inline" } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 <% else %>
   <div class="card text-center py-16">
