@@ -24,8 +24,12 @@ COPY . .
 # Garante que scripts de bin/ são executáveis
 RUN chmod +x bin/* 2>/dev/null || true
 
-# 1. Compila o Tailwind CSS → app/assets/builds/application.css
-RUN RAILS_ENV=production SECRET_KEY_BASE=build_placeholder bundle exec rails tailwindcss:build
+# 1. Compila o Tailwind CSS → app/assets/builds/application.css (igual ao docker-compose)
+RUN bundle exec tailwindcss \
+    -i app/assets/stylesheets/application.tailwind.css \
+    -o app/assets/builds/application.css \
+    -c config/tailwind.config.js \
+    --minify
 # 2. Propshaft varre os assets e cria public/assets/ com manifesto
 RUN RAILS_ENV=production SECRET_KEY_BASE=build_placeholder bundle exec rails assets:precompile
 
