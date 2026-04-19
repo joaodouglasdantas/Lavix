@@ -4,8 +4,8 @@
       <%= link_to (user_signed_in? ? dashboard_path : root_path), class: "flex items-center gap-2 group" do %>
         <%= image_tag "logo.png",
               alt: "Lavix",
-              class: "h-8 w-auto transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(255,107,0,0.7)]",
-              style: "filter: drop-shadow(0 0 5px rgba(255,107,0,0.35));" %>
+              class: "transition-all duration-300",
+              style: "height: 32px; width: auto; filter: drop-shadow(0 0 5px rgba(255,107,0,0.35));" %>
         <span class="text-xl font-bold tracking-tight">
           <span class="text-ink-50">La</span><span class="text-neon-500">vix</span>
         </span>
