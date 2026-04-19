@@ -2,7 +2,9 @@
 
 Dashboard financeiro moderno que transforma dados em decisões rápidas. Interface escura com detalhes em laranja neon, construída com Ruby on Rails 7, PostgreSQL e Tailwind CSS.
 
-[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-FF6B00?style=flat)](https://claude.ai)
+## ✦ Built with
+
+[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-FF6B00?style=flat&logo=anthropic&logoColor=white)](https://claude.ai)[![Ruby on Rails](https://img.shields.io/badge/Ruby%20on%20Rails-CC0000?style=flat&logo=rubyonrails&logoColor=white)](https://rubyonrails.org)[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org)[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=flat&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com)[![Railway](https://img.shields.io/badge/Railway-0B0D0E?style=flat&logo=railway&logoColor=white)](https://railway.app)[![Hotwire](https://img.shields.io/badge/Hotwire-9353D3?style=flat&logo=hotwire&logoColor=white)](https://hotwired.dev)[![Devise](https://img.shields.io/badge/Devise-CC0000?style=flat&logo=ruby&logoColor=white)](https://github.com/heartcombo/devise)
 
 ---
 
