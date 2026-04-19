@@ -223,6 +223,11 @@ O projeto está deployado no [Railway](https://railway.app) com PostgreSQL geren
 
 Acentos neon aparecem em botões primários, cards de destaque (`card-accent`), links (`link-neon`) e badges de status.
 
+
+---
+
+[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-FF6B00?style=flat)](https://claude.ai)
+
 ---
 
 ## Observações técnicas
