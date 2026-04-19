@@ -1,8 +1,14 @@
 #!/bin/bash -e
 
+echo "=== Starting Lavix ==="
+
 # Remove PID antigo caso o processo tenha morrido de forma bruta
 if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
 fi
 
-exec "$@"
+echo "=== Running db:migrate ==="
+bundle exec rails db:migrate
+
+echo "=== Starting Rails server on port ${PORT:-3000} ==="
+exec bundle exec rails server -b 0.0.0.0 -p ${PORT:-3000}
