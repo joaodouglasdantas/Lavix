@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-echo "=== Starting Lavix ==="
+echo "=== Iniciando Lavix ==="
 
 # Garante que os diretórios temporários existem
 mkdir -p tmp/pids tmp/sockets log
@@ -10,8 +10,14 @@ if [ -f tmp/pids/server.pid ]; then
   rm tmp/pids/server.pid
 fi
 
-echo "=== Running db:migrate ==="
+echo "=== Verificando assets compilados ==="
+echo "--- app/assets/builds/ ---"
+ls -la app/assets/builds/ 2>/dev/null || echo "DIRETÓRIO NÃO EXISTE"
+echo "--- public/assets/ ---"
+ls -la public/assets/ 2>/dev/null | head -10 || echo "DIRETÓRIO NÃO EXISTE"
+
+echo "=== Rodando db:migrate ==="
 bundle exec rails db:migrate
 
-echo "=== Starting Puma server ==="
+echo "=== Iniciando Puma ==="
 exec bundle exec puma -C config/puma.rb
