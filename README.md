@@ -2,6 +2,8 @@
 
 Dashboard financeiro moderno que transforma dados em decisões rápidas. Interface escura com detalhes em laranja neon, construída com Ruby on Rails 7, PostgreSQL e Tailwind CSS.
 
+[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-FF6B00?style=flat)](https://claude.ai)
+
 ---
 
 ## Stack
@@ -222,11 +224,6 @@ O projeto está deployado no [Railway](https://railway.app) com PostgreSQL geren
 | `neon-500` | `#FF6B00` | Laranja neon — botões, destaques, links |
 
 Acentos neon aparecem em botões primários, cards de destaque (`card-accent`), links (`link-neon`) e badges de status.
-
-
----
-
-[![Built with Claude](https://img.shields.io/badge/Built%20with-Claude-FF6B00?style=flat)](https://claude.ai)
 
 ---
 
