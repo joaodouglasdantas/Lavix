@@ -60,19 +60,19 @@
       <h2 class="card-title"><%= t("dashboard.comparison_table") %></h2>
     </div>
     <div class="table-scroll-wrapper">
-    <table class="table table-auto-fixed">
+    <table class="table">
       <thead>
         <tr>
-          <th>Mês</th>
-          <th class="text-right">Receitas</th>
-          <th class="text-right">Despesas</th>
-          <th class="text-right">Saldo</th>
+          <th class="whitespace-nowrap">Mês</th>
+          <th class="text-right whitespace-nowrap">Receitas</th>
+          <th class="text-right whitespace-nowrap">Despesas</th>
+          <th class="text-right whitespace-nowrap">Saldo</th>
         </tr>
       </thead>
       <tbody>
         <% @comparison.each do |row| %>
           <tr>
-            <td class="font-medium"><%= row[:label] %></td>
+            <td class="font-medium whitespace-nowrap"><%= row[:label] %></td>
             <td class="text-right font-mono text-emerald-300"><%= brl(row[:income]) %></td>
             <td class="text-right font-mono text-red-300"><%= brl(row[:expense]) %></td>
             <td class="text-right font-mono <%= row[:balance] >= 0 ? 'text-neon-400' : 'text-red-400' %>">

@@ -6,8 +6,8 @@ export default class extends Controller {
   toggle() {
     const hidden = this.menuTarget.classList.contains("hidden")
     this.menuTarget.classList.toggle("hidden", !hidden)
-    this.iconOpenTarget.classList.toggle("hidden", !hidden)
-    this.iconCloseTarget.classList.toggle("hidden", hidden)
+    this.iconOpenTarget.classList.toggle("hidden", hidden)
+    this.iconCloseTarget.classList.toggle("hidden", !hidden)
   }
 
   close() {
