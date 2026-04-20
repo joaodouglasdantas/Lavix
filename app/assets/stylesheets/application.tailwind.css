@@ -109,10 +109,17 @@
     min-width: 0;
     overflow: hidden;
   }
-  .cell-truncate-flex > .inner > span {
+  /* Garante que o dot nunca encolha dentro do flex */
+  .cell-truncate-flex > .inner > .dot {
+    flex-shrink: 0;
+  }
+  /* Truncamento aplicado ao texto (span ou link), nunca ao dot */
+  .cell-truncate-flex > .inner > span:not(.dot),
+  .cell-truncate-flex > .inner > a {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    min-width: 0;
     cursor: help;
   }
 
