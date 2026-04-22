@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
 
-  # Raiz: se autenticado manda pro dashboard, senão para landing pública
   authenticated :user do
     root "dashboard#index", as: :authenticated_root
   end
@@ -14,4 +13,6 @@ Rails.application.routes.draw do
 
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
+
+  get "plano", to: "plano#index", as: :plano
 end
