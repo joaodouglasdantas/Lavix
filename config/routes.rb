@@ -11,7 +11,6 @@ Rails.application.routes.draw do
   resources :categories
   resources :transactions
 
-  # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
   get "plano", to: "plano#index", as: :plano

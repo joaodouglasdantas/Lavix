@@ -1,0 +1,238 @@
+<% content_for :title, "Plano Financeiro — Lavix" %>
+
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+  <div>
+    <h1 class="text-3xl">Plano Financeiro</h1>
+    <p class="text-ink-200 text-sm mt-1">Análise inteligente das suas finanças · <%= I18n.l(Date.current, format: "%B de %Y").capitalize %></p>
+  </div>
+  <%= link_to "Novo lançamento", new_transaction_path, class: "btn-primary self-start" %>
+</div>
+
+<% if @has_data %>
+
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+
+    <div class="card-accent flex flex-col justify-between">
+      <div class="card-title">Score financeiro</div>
+      <div class="mt-3 flex items-end gap-3">
+        <span class="text-5xl font-bold <%= @health_score >= 70 ? 'text-neon-400' : @health_score >= 40 ? 'text-yellow-400' : 'text-red-400' %>">
+          <%= @health_score %>
+        </span>
+        <span class="text-ink-200 text-sm mb-1">/100</span>
+      </div>
+      <div class="mt-3 w-full bg-ink-700 rounded-full h-1.5">
+        <div class="h-1.5 rounded-full <%= @health_score >= 70 ? 'bg-neon-400' : @health_score >= 40 ? 'bg-yellow-400' : 'bg-red-400' %>"
+             style="width: <%= @health_score %>%"></div>
+      </div>
+      <p class="text-xs text-ink-200 mt-2">
+        <%= if @health_score >= 70 then "Saúde financeira boa 🏆"
+            elsif @health_score >= 40 then "Pode melhorar ⚠️"
+            else "Atenção necessária 🔴"
+            end %>
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Gastos este mês</div>
+      <div class="card-value text-red-400"><%= brl(@this_month_expense) %></div>
+      <p class="text-xs text-ink-200 mt-2">Receitas: <span class="text-emerald-400"><%= brl(@this_month_income) %></span></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Previsão próximo mês</div>
+      <div class="card-value text-neon-400"><%= brl(@forecast_total) %></div>
+      <p class="text-xs text-ink-200 mt-2">Média dos últimos 3 meses</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Taxa de economia</div>
+      <div class="card-value <%= @avg_saving_rate >= 20 ? 'text-neon-400' : @avg_saving_rate > 0 ? 'text-yellow-400' : 'text-red-400' %>">
+        <%= @avg_saving_rate.round(1) %>%
+      </div>
+      <p class="text-xs text-ink-200 mt-2">Média dos últimos 6 meses</p>
+    </div>
+  </div>
+
+  <% if @insights.any? %>
+    <div class="mb-8">
+      <h2 class="card-title mb-3">💡 Insights</h2>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <% @insights.each do |insight| %>
+          <%
+            border_color = case insight[:type]
+                           when :success then "border-emerald-500/40 bg-emerald-500/5"
+                           when :warning then "border-yellow-500/40 bg-yellow-500/5"
+                           when :danger  then "border-red-500/40 bg-red-500/5"
+                           when :tip     then "border-neon-500/40 bg-neon-500/5"
+                           else               "border-ink-600/50 bg-ink-800/60"
+                           end
+          %>
+          <div class="rounded-xl border p-4 backdrop-blur <%= border_color %>">
+            <div class="flex items-start gap-3">
+              <span class="text-xl leading-none mt-0.5"><%= insight[:icon] %></span>
+              <div>
+                <p class="text-sm font-semibold text-ink-50"><%= insight[:title] %></p>
+                <p class="text-xs text-ink-200 mt-1"><%= insight[:body] %></p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid gap-6 lg:grid-cols-2 mb-8">
+
+    <div class="card">
+      <h2 class="card-title mb-4">Maiores gastos do mês</h2>
+      <% if @expenses_by_category_month.any? %>
+        <%
+          chart_data   = @expenses_by_category_month.map { |c| [c[:name], c[:total]] }.to_h
+          chart_colors = @expenses_by_category_month.map { |c| c[:color] }
+        %>
+        <%= bar_chart chart_data,
+                      colors: chart_colors,
+                      height: "280px",
+                      library: { backgroundColor: "transparent", legend: { display: false } } %>
+      <% else %>
+        <p class="text-ink-200 text-sm">Sem despesas registradas neste mês.</p>
+      <% end %>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title mb-4">Previsão por categoria — próximo mês</h2>
+      <% if @forecast_next_month.any? %>
+        <%
+          forecast_data   = @forecast_next_month.map { |c| [c[:name], c[:average]] }.to_h
+          forecast_colors = @forecast_next_month.map { |c| c[:color] }
+        %>
+        <%= bar_chart forecast_data,
+                      colors: forecast_colors,
+                      height: "280px",
+                      library: { backgroundColor: "transparent", legend: { display: false } } %>
+      <% else %>
+        <p class="text-ink-200 text-sm">Dados insuficientes para previsão (necessário ao menos 1 mês anterior).</p>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card mb-8">
+    <h2 class="card-title mb-4">Ranking histórico — maiores gastos por categoria</h2>
+    <% if @expenses_by_category_all.any? %>
+      <% max_total = @expenses_by_category_all.first[:total].to_f %>
+      <div class="space-y-3">
+        <% @expenses_by_category_all.first(8).each_with_index do |cat, i| %>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-ink-200 w-4 text-right"><%= i + 1 %></span>
+            <span class="dot flex-shrink-0" style="background-color: <%= cat[:color] %>; width:10px; height:10px;"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-sm text-ink-50 truncate"><%= cat[:name] %></span>
+                <span class="text-sm font-mono text-red-300 ml-2 flex-shrink-0"><%= brl(cat[:total]) %></span>
+              </div>
+              <div class="w-full bg-ink-700 rounded-full h-1">
+                <div class="h-1 rounded-full" style="width: <%= (cat[:total] / max_total * 100).round(1) %>%; background-color: <%= cat[:color] %>"></div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="text-ink-200 text-sm">Nenhuma despesa registrada ainda.</p>
+    <% end %>
+  </div>
+
+  <% if @trends.any? %>
+    <div class="card p-0 overflow-hidden mb-8">
+      <div class="px-5 py-4 border-b border-ink-700">
+        <h2 class="card-title">Tendências por categoria</h2>
+        <p class="text-xs text-ink-200 mt-1">Comparando último mês com o mês anterior</p>
+      </div>
+      <div class="table-scroll-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th class="text-right">Mês anterior</th>
+              <th class="text-right">Último mês</th>
+              <th class="text-right">Variação</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @trends.each do |trend| %>
+              <tr>
+                <td class="font-medium"><%= trend[:name] %></td>
+                <td class="text-right font-mono text-ink-200"><%= brl(trend[:prev_month]) %></td>
+                <td class="text-right font-mono text-ink-50"><%= brl(trend[:last_month]) %></td>
+                <td class="text-right font-mono">
+                  <% if trend[:delta].nil? %>
+                    <span class="text-ink-200 text-xs">novo</span>
+                  <% elsif trend[:delta] > 0 %>
+                    <span class="text-red-400">↑ <%= trend[:delta] %>%</span>
+                  <% elsif trend[:delta] < 0 %>
+                    <span class="text-emerald-400">↓ <%= trend[:delta].abs %>%</span>
+                  <% else %>
+                    <span class="text-ink-200">= 0%</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @forecast_next_month.any? %>
+    <div class="card p-0 overflow-hidden">
+      <div class="px-5 py-4 border-b border-ink-700">
+        <h2 class="card-title">Previsão detalhada — próximo mês</h2>
+        <p class="text-xs text-ink-200 mt-1">Baseada na média dos últimos 3 meses por categoria</p>
+      </div>
+      <div class="table-scroll-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Categoria</th>
+              <th class="text-right">Previsão</th>
+              <th class="text-right">% do total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @forecast_next_month.each do |cat| %>
+              <tr>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <span class="dot" style="background-color: <%= cat[:color] %>; width:8px; height:8px;"></span>
+                    <%= cat[:name] %>
+                  </div>
+                </td>
+                <td class="text-right font-mono text-neon-400"><%= brl(cat[:average]) %></td>
+                <td class="text-right font-mono text-ink-200">
+                  <%= @forecast_total > 0 ? "#{(cat[:average] / @forecast_total * 100).round(1)}%" : "—" %>
+                </td>
+              </tr>
+            <% end %>
+            <tr class="border-t border-ink-600">
+              <td class="font-semibold text-ink-50">Total previsto</td>
+              <td class="text-right font-mono font-semibold text-neon-400"><%= brl(@forecast_total) %></td>
+              <td class="text-right font-mono text-ink-200">100%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
+
+<% else %>
+  <div class="card-accent text-center py-20">
+    <h2 class="text-2xl mb-2">Sem dados ainda</h2>
+    <p class="text-ink-200 mb-6 max-w-md mx-auto">
+      Cadastre seus lançamentos para que o plano financeiro possa gerar análises, previsões e insights personalizados.
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <%= link_to "Criar categoria", new_category_path, class: "btn-primary" %>
+      <%= link_to "Novo lançamento", new_transaction_path, class: "btn-secondary" %>
+    </div>
+  </div>
+<% end %>
