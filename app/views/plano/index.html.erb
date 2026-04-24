@@ -14,19 +14,42 @@
 
     <div class="card-accent flex flex-col justify-between">
       <div class="card-title">Score financeiro</div>
-      <div class="mt-3 flex items-end gap-3">
-        <span class="text-5xl font-bold <%= @health_score >= 70 ? 'text-neon-400' : @health_score >= 40 ? 'text-yellow-400' : 'text-red-400' %>">
+      <div class="mt-3 flex items-end gap-2">
+        <span class="text-5xl font-bold" style="color: <%= @health_score >= 70 ? '#4ade80' : @health_score >= 40 ? '#eab308' : '#f87171' %>">
           <%= @health_score %>
         </span>
-        <span class="text-ink-200 text-sm mb-1">/100</span>
+        <span class="text-ink-400 text-sm mb-1">/100</span>
       </div>
-      <div class="mt-3 w-full bg-ink-700 rounded-full h-1.5">
-        <div class="h-1.5 rounded-full <%= @health_score >= 70 ? 'bg-neon-400' : @health_score >= 40 ? 'bg-yellow-400' : 'bg-red-400' %>"
-             style="width: <%= @health_score %>%"></div>
+
+      <div class="mt-4">
+        <%
+          score_pct  = @health_score.clamp(0, 100)
+          dot_color  = score_pct >= 70 ? '#4ade80' : score_pct >= 40 ? '#eab308' : '#f87171'
+        %>
+        <!-- Barra com gradiente vermelho → amarelo → verde -->
+        <div class="relative w-full h-1.5 rounded-full" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #4ade80 100%); opacity: 0.2;"></div>
+        <div class="relative -mt-1.5 h-1.5 rounded-full" style="width: <%= score_pct %>%; background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #4ade80 100%);"></div>
+        <!-- Indicador da posição atual -->
+        <div class="relative -mt-2.5 h-4 pointer-events-none">
+          <div class="absolute w-3.5 h-3.5 rounded-full border-2 border-ink-900 shadow"
+               style="left: calc(<%= score_pct %>% - 7px); background-color: <%= dot_color %>;"></div>
+        </div>
+
+        <!-- Marcadores de etapas -->
+        <div class="relative mt-2 h-3">
+          <div class="absolute w-px h-2 bg-ink-600" style="left: 40%;"></div>
+          <div class="absolute w-px h-2 bg-ink-600" style="left: 70%;"></div>
+        </div>
+        <div class="relative flex text-xs mt-0.5" style="color: #6b7280;">
+          <span style="width: 40%">Ruim</span>
+          <span style="width: 30%; text-align: center;">Regular</span>
+          <span style="width: 30%; text-align: right;">Bom</span>
+        </div>
       </div>
-      <p class="text-xs text-ink-200 mt-2">
-        <%= if @health_score >= 70 then "Saúde financeira boa"
-            elsif @health_score >= 40 then "Pode melhorar"
+
+      <p class="text-xs text-ink-300 mt-3">
+        <%= if score_pct >= 70 then "Saúde financeira boa"
+            elsif score_pct >= 40 then "Pode melhorar"
             else "Atenção necessária"
             end %>
       </p>
