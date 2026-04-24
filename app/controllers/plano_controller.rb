@@ -48,8 +48,17 @@ class PlanoController < ApplicationController
       end
     end
 
+    # Conta quantos dos últimos 3 meses têm dados reais
+    @forecast_months_available = (1..3).count do |offset|
+      month_start = (Date.current.beginning_of_month - offset.months)
+      month_range = month_start..month_start.end_of_month
+      current_user.transactions.expenses.in_range(month_range).exists?
+    end
+    @forecast_months_available = [@forecast_months_available, 1].max
+
     @forecast_next_month = category_data.map do |name, data|
-      avg = data[:months].sum / 3.0
+      # Divide pelo número real de meses com dados, não sempre por 3
+      avg = data[:months].sum / data[:months].length.to_f
       {
         name:    name,
         color:   data[:color],
@@ -86,15 +95,19 @@ class PlanoController < ApplicationController
 
     @health_score = calculate_health_score
 
-    saving_data = (1..6).map do |offset|
+    # Considera apenas meses que têm ao menos uma transação (sem exigir 6 meses completos)
+    saving_data = (1..6).filter_map do |offset|
       month_start = (Date.current.beginning_of_month - offset.months)
       month_range = month_start..month_start.end_of_month
       txn = current_user.transactions.in_range(month_range)
       inc = txn.income.sum(:amount)
       exp = txn.expenses.sum(:amount)
-      inc > 0 ? ((inc - exp) / inc.to_f * 100).round(1) : 0
-    end
-    @avg_saving_rate = saving_data.sum / saving_data.length.to_f
+      next if inc == 0 && exp == 0  # pula meses sem nenhum dado
+      inc > 0 ? ((inc - exp) / inc.to_f * 100).round(1) : nil
+    end.compact
+
+    @saving_rate_months = saving_data.length
+    @avg_saving_rate    = saving_data.any? ? (saving_data.sum / saving_data.length.to_f).round(1) : 0.0
 
     @insights = generate_insights
   end
@@ -186,19 +199,21 @@ class PlanoController < ApplicationController
       }
     end
 
+    periodo = @saving_rate_months == 1 ? "último mês" : "últimos #{@saving_rate_months} meses"
+
     if @avg_saving_rate < 10
       insights << {
         type:  :tip,
         icon:  "💡",
         title: "Dica: aumente sua taxa de economia",
-        body:  "Sua taxa média de economia nos últimos 6 meses é #{@avg_saving_rate.round(1)}%. O ideal é economizar pelo menos 20% da renda. Tente reduzir os gastos nas categorias de maior impacto."
+        body:  "Sua taxa média de economia nos #{periodo} é #{@avg_saving_rate.round(1)}%. O ideal é economizar pelo menos 20% da renda. Tente reduzir os gastos nas categorias de maior impacto."
       }
     elsif @avg_saving_rate >= 20
       insights << {
         type:  :success,
         icon:  "🏆",
         title: "Excelente taxa de economia!",
-        body:  "Você está economizando em média #{@avg_saving_rate.round(1)}% da sua renda — acima da meta recomendada de 20%. Continue!"
+        body:  "Você está economizando em média #{@avg_saving_rate.round(1)}% da sua renda nos #{periodo} — acima da meta recomendada de 20%. Continue!"
       }
     end
 

@@ -63,15 +63,19 @@
     <div class="card">
       <div class="card-title">Previsão próximo mês</div>
       <div class="card-value text-neon-400"><%= brl(@forecast_total) %></div>
-      <p class="text-xs text-ink-200 mt-2">Média dos últimos 3 meses</p>
+      <p class="text-xs text-ink-200 mt-2">
+        Média <%= @forecast_months_available == 1 ? "do último mês" : "dos últimos #{@forecast_months_available} meses" %>
+      </p>
     </div>
 
     <div class="card">
       <div class="card-title">Taxa de economia</div>
-      <div class="card-value <%= @avg_saving_rate >= 20 ? 'text-neon-400' : @avg_saving_rate > 0 ? 'text-yellow-400' : 'text-red-400' %>">
+      <div class="card-value" style="color: <%= @avg_saving_rate >= 20 ? '#4ade80' : @avg_saving_rate > 0 ? '#eab308' : '#f87171' %>">
         <%= @avg_saving_rate.round(1) %>%
       </div>
-      <p class="text-xs text-ink-200 mt-2">Média dos últimos 6 meses</p>
+      <p class="text-xs text-ink-200 mt-2">
+        <%= @saving_rate_months == 0 ? "Sem dados de receita ainda" : "Média #{@saving_rate_months == 1 ? "do último mês" : "dos últimos #{@saving_rate_months} meses"}" %>
+      </p>
     </div>
   </div>
 
@@ -204,7 +208,7 @@
     <div class="card p-0 overflow-hidden">
       <div class="px-5 py-4 border-b border-ink-700">
         <h2 class="card-title">Previsão detalhada — próximo mês</h2>
-        <p class="text-xs text-ink-200 mt-1">Baseada na média dos últimos 3 meses por categoria</p>
+        <p class="text-xs text-ink-200 mt-1">Baseada na média <%= @forecast_months_available == 1 ? "do último mês" : "dos últimos #{@forecast_months_available} meses" %> por categoria</p>
       </div>
       <div class="table-scroll-wrapper">
         <table class="table">
