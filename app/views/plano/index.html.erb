@@ -26,11 +26,13 @@
           score_pct  = @health_score.clamp(0, 100)
           dot_color  = score_pct >= 70 ? '#4ade80' : score_pct >= 40 ? '#eab308' : '#f87171'
         %>
-        <div class="relative w-full h-1.5 rounded-full" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%); opacity: 0.2;"></div>
-        <div class="relative -mt-1.5 h-1.5 rounded-full" style="width: <%= score_pct %>%; background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%);"></div>
-        <div class="relative -mt-2.5 h-4 pointer-events-none">
-          <div class="absolute w-3.5 h-3.5 rounded-full border-2 border-ink-900 shadow"
-               style="left: calc(<%= score_pct %>% - 7px); background-color: <%= dot_color %>;"></div>
+        <div class="relative w-full h-1.5 rounded-full overflow-hidden">
+          <div class="absolute inset-0" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%); opacity: 0.2;"></div>
+          <div class="absolute inset-0" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%); clip-path: inset(0 <%= 100 - score_pct %>% 0 0 round 9999px);"></div>
+        </div>
+        <div class="relative -mt-2 h-4 pointer-events-none">
+          <div class="absolute w-3 h-3 rounded-full border-2 border-ink-900 shadow"
+               style="left: calc(<%= score_pct %>% - 6px); background-color: <%= dot_color %>;"></div>
         </div>
 
         <div class="relative mt-2 h-3">
