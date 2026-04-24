@@ -1,5 +1,5 @@
 Devise.setup do |config|
-  config.mailer_sender = ENV.fetch("MAILER_SENDER", "onboarding@resend.dev")
+  config.mailer_sender = "no-reply@lavix.app"
 
   require "devise/orm/active_record"
 

@@ -21,8 +21,6 @@ gem "groupdate"
 gem "rails-i18n", "~> 7.0"
 gem "devise-i18n"
 
-gem "resend", "~> 0.11"
-
 gem "bootsnap", require: false
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

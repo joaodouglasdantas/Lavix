@@ -17,15 +17,14 @@
       <%= f.password_field :password, autocomplete: "current-password", class: "form-input", required: true %>
     </div>
 
-    <div class="flex items-center justify-between text-sm">
-      <% if devise_mapping.rememberable? %>
+    <% if devise_mapping.rememberable? %>
+      <div class="text-sm">
         <label class="inline-flex items-center gap-2 text-ink-100">
           <%= f.check_box :remember_me, class: "rounded bg-ink-700 border-ink-500 text-neon-500 focus:ring-neon-500" %>
           Lembrar de mim
         </label>
-      <% end %>
-      <%= link_to "Esqueci a senha", new_password_path(resource_name), class: "link-neon" %>
-    </div>
+      </div>
+    <% end %>
 
     <%= f.submit "Entrar", class: "btn-primary w-full" %>
   <% end %>

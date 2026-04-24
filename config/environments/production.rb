@@ -19,9 +19,6 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   config.action_mailer.perform_caching = false
-  config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :resend
-  config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost") }
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
   config.log_formatter = ::Logger::Formatter.new
