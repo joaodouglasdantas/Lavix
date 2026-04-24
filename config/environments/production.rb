@@ -24,13 +24,13 @@ Rails.application.configure do
   config.action_mailer.default_url_options = { host: ENV.fetch("APP_HOST", "localhost") }
   config.action_mailer.smtp_settings = {
     address:              ENV.fetch("SMTP_ADDRESS",  "smtp.resend.com"),
-    port:                 ENV.fetch("SMTP_PORT",     "465").to_i,
+    port:                 ENV.fetch("SMTP_PORT",     "587").to_i,
     domain:               ENV.fetch("APP_HOST",      "localhost"),
     user_name:            ENV.fetch("SMTP_USERNAME", "resend"),
     password:             ENV.fetch("SMTP_PASSWORD", ""),
     authentication:       :plain,
-    enable_starttls_auto: false,
-    ssl:                  true
+    enable_starttls_auto: true,
+    ssl:                  false
   }
   config.i18n.fallbacks = true
   config.active_support.report_deprecations = false
