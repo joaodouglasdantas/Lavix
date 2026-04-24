@@ -25,9 +25,9 @@
              style="width: <%= @health_score %>%"></div>
       </div>
       <p class="text-xs text-ink-200 mt-2">
-        <%= if @health_score >= 70 then "Saúde financeira boa 🏆"
-            elsif @health_score >= 40 then "Pode melhorar ⚠️"
-            else "Atenção necessária 🔴"
+        <%= if @health_score >= 70 then "Saúde financeira boa"
+            elsif @health_score >= 40 then "Pode melhorar"
+            else "Atenção necessária"
             end %>
       </p>
     </div>
@@ -55,26 +55,21 @@
 
   <% if @insights.any? %>
     <div class="mb-8">
-      <h2 class="card-title mb-3">💡 Insights</h2>
-      <div class="grid gap-3 sm:grid-cols-2">
+      <h2 class="text-xs font-semibold tracking-widest uppercase text-ink-400 mb-4">Insights</h2>
+      <div class="grid gap-2 sm:grid-cols-2">
         <% @insights.each do |insight| %>
           <%
-            border_color = case insight[:type]
-                           when :success then "border-emerald-500/40 bg-emerald-500/5"
-                           when :warning then "border-yellow-500/40 bg-yellow-500/5"
-                           when :danger  then "border-red-500/40 bg-red-500/5"
-                           when :tip     then "border-neon-500/40 bg-neon-500/5"
-                           else               "border-ink-600/50 bg-ink-800/60"
-                           end
+            accent = case insight[:type]
+                     when :success then "#10b981"
+                     when :warning then "#eab308"
+                     when :danger  then "#f87171"
+                     when :tip     then "#f97316"
+                     else               "#6b7280"
+                     end
           %>
-          <div class="rounded-xl border p-4 backdrop-blur <%= border_color %>">
-            <div class="flex items-start gap-3" style="padding-left: 0.5rem;">
-              <span class="text-xl flex-shrink-0 w-7 flex items-center justify-center"><%= insight[:icon] %></span>
-              <div>
-                <p class="text-sm font-semibold text-ink-50"><%= insight[:title] %></p>
-                <p class="text-xs text-ink-200 mt-1"><%= insight[:body] %></p>
-              </div>
-            </div>
+          <div class="rounded-lg bg-ink-800/40 px-4 py-3" style="border-left: 2px solid <%= accent %>;">
+            <p class="text-sm font-semibold text-ink-50"><%= insight[:title] %></p>
+            <p class="text-xs text-ink-300 mt-1 leading-relaxed"><%= insight[:body] %></p>
           </div>
         <% end %>
       </div>
