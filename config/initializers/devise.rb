@@ -1,5 +1,5 @@
 Devise.setup do |config|
-  config.mailer_sender = "no-reply@lavix.app"
+  config.mailer_sender = ENV.fetch("MAILER_SENDER", "onboarding@resend.dev")
 
   require "devise/orm/active_record"
 
@@ -18,4 +18,6 @@ Devise.setup do |config|
 
   config.responder.error_status = :unprocessable_entity
   config.responder.redirect_status = :see_other
+
+  config.mailer_sender = "onboarding@resend.dev"
 end
