@@ -35,14 +35,13 @@ Dashboard financeiro moderno que transforma dados em decisões rápidas. Interfa
 docker compose up --build
 ```
 
-Isso sobe quatro serviços:
+Isso sobe três serviços:
 
 | Serviço | O que faz | Endereço |
 |---|---|---|
 | `web` | Servidor Rails | http://localhost:3000 |
 | `db` | PostgreSQL | localhost:**5433** |
 | `css` | Watcher do Tailwind | — |
-| `mailhog` | Caixa de emails local | http://localhost:8025 |
 
 Na primeira vez, crie o banco e rode as migrations:
 
@@ -116,16 +115,6 @@ Sair com `\q`.
 
 ---
 
-## Ver emails locais (MailHog)
-
-Em desenvolvimento, todos os emails enviados pelo Rails (confirmação de conta, recuperação de senha etc.) são interceptados pelo **MailHog** — nenhum email real é enviado.
-
-Acesse: **http://localhost:8025**
-
-O MailHog sobe automaticamente com o `docker compose up`. Qualquer email disparado pelo app aparece lá em tempo real.
-
----
-
 ## Comandos úteis
 
 ```bash
@@ -181,7 +170,6 @@ db/migrate/        # 3 migrations: users, categories, transactions
 | `/transactions` | CRUD de lançamentos |
 | `/users/sign_in` | Login |
 | `/users/sign_up` | Cadastro |
-| `/users/password/new` | Recuperar senha |
 | `/up` | Health check |
 
 ---
@@ -212,6 +200,7 @@ O projeto está deployado no [Railway](https://railway.app) com PostgreSQL geren
 | `RAILS_ENV` | `production` |
 | `SECRET_KEY_BASE` | Chave secreta longa e aleatória |
 | `DATABASE_URL` | Injetada automaticamente pelo addon PostgreSQL do Railway |
+| `APP_HOST` | Domínio da aplicação, ex: `lavix.up.railway.app` |
 
 ---
 
