@@ -138,28 +138,21 @@
   </div>
 
   <div class="card mb-8">
-    <h2 class="card-title mb-4">Ranking histórico — maiores gastos por categoria</h2>
-    <% if @expenses_by_category_all.any? %>
-      <% max_total = @expenses_by_category_all.first[:total].to_f %>
-      <div class="space-y-3">
-        <% @expenses_by_category_all.first(8).each_with_index do |cat, i| %>
-          <div class="flex items-center gap-3">
-            <span class="text-xs text-ink-200 w-4 text-right"><%= i + 1 %></span>
-            <span class="dot flex-shrink-0" style="background-color: <%= cat[:color] %>; width:10px; height:10px;"></span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-sm text-ink-50 truncate"><%= cat[:name] %></span>
-                <span class="text-sm font-mono text-red-300 ml-2 flex-shrink-0"><%= brl(cat[:total]) %></span>
-              </div>
-              <div class="w-full bg-ink-700 rounded-full h-1">
-                <div class="h-1 rounded-full" style="width: <%= (cat[:total] / max_total * 100).round(1) %>%; background-color: <%= cat[:color] %>"></div>
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
+    <h2 class="card-title mb-1">Evolução de gastos por categoria</h2>
+    <p class="text-xs text-ink-400 mb-4">Valor gasto por mês em cada categoria</p>
+    <% if @evolution_by_cat.any? %>
+      <%
+        chart_series = @evolution_by_cat.map do |cat|
+          { name: cat[:name], data: cat[:data] }
+        end
+        chart_colors = @evolution_by_cat.map { |c| c[:color] }
+      %>
+      <%= line_chart chart_series,
+                    colors: chart_colors,
+                    height: "300px",
+                    library: { backgroundColor: "transparent" } %>
     <% else %>
-      <p class="text-ink-200 text-sm">Nenhuma despesa registrada ainda.</p>
+      <p class="text-ink-400 text-sm">Nenhuma despesa registrada ainda.</p>
     <% end %>
   </div>
 

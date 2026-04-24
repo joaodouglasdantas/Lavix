@@ -1,7 +1,6 @@
 ARG RUBY_VERSION=3.2.2
 FROM ruby:$RUBY_VERSION-slim
 
-# Dependências do sistema
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
       build-essential \
@@ -14,29 +13,22 @@ RUN apt-get update -qq && \
 
 WORKDIR /app
 
-# Instala gems primeiro (cache de layer)
 COPY Gemfile Gemfile.lock* ./
 RUN gem install bundler && bundle install
 
-# Copia o restante do projeto
 COPY . .
 
-# Garante que scripts de bin/ são executáveis
 RUN chmod +x bin/* 2>/dev/null || true
 
-# 1. Compila o Tailwind CSS → app/assets/builds/application.css (igual ao docker-compose)
 RUN bundle exec tailwindcss \
     -i app/assets/stylesheets/application.tailwind.css \
     -o app/assets/builds/application.css \
     -c config/tailwind.config.js \
     --minify
-# 2. Propshaft varre os assets e cria public/assets/ com manifesto
 RUN RAILS_ENV=production SECRET_KEY_BASE=build_placeholder bundle exec rails assets:precompile
 
-# Porta exposta pela aplicação Rails
 EXPOSE 3000
 
-# Script de entrada garante que o servidor sobe mesmo depois de crash anterior
 COPY bin/docker-entrypoint /usr/bin/docker-entrypoint
 RUN chmod +x /usr/bin/docker-entrypoint
 ENTRYPOINT ["docker-entrypoint"]

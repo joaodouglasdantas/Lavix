@@ -1,6 +1,3 @@
-# Seeds do Lavix — cria um usuário de demonstração com categorias e lançamentos fictícios.
-# Execute: docker compose exec web bin/rails db:seed
-
 user = User.find_or_create_by!(email: "demo@lavix.app") do |u|
   u.password = "lavix123"
   u.password_confirmation = "lavix123"
@@ -24,11 +21,9 @@ end
 income_categories  = categories.select { |c| %w[Salário Outras\ receitas].include?(c.name) }
 expense_categories = categories - income_categories
 
-# Gera lançamentos pelos últimos 6 meses
 6.times do |month_offset|
   ref_date = Date.current.beginning_of_month - month_offset.months
 
-  # Receitas mensais
   user.transactions.find_or_create_by!(
     category: income_categories.first,
     date: ref_date + 4.days,
@@ -45,7 +40,6 @@ expense_categories = categories - income_categories
     ) { |t| t.description = "Freelance" }
   end
 
-  # Despesas variadas
   rand(8..14).times do
     cat = expense_categories.sample
     day = rand(1..28)

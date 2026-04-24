@@ -1,5 +1,5 @@
 class Transaction < ApplicationRecord
-  self.inheritance_column = :_sti_disabled # "kind" não é STI
+  self.inheritance_column = :_sti_disabled
 
   KINDS = %w[income expense].freeze
 

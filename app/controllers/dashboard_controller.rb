@@ -7,7 +7,6 @@ class DashboardController < ApplicationController
     @total_expense = transactions.expenses.sum(:amount)
     @balance       = @total_income - @total_expense
 
-    # Despesas por categoria (mês atual)
     @expenses_by_category = current_user.transactions
                                         .expenses
                                         .in_range(@current_month)
@@ -15,13 +14,11 @@ class DashboardController < ApplicationController
                                         .group("categories.name")
                                         .sum(:amount)
 
-    # Cores para o gráfico, respeitando a cor cadastrada
     @category_colors = current_user.categories
                                    .where(name: @expenses_by_category.keys)
                                    .pluck(:name, :color)
                                    .to_h
 
-    # Série temporal: últimos 12 meses
     range_12m = 11.months.ago.beginning_of_month..Date.current.end_of_month
 
     @income_series  = current_user.transactions.income
@@ -34,7 +31,6 @@ class DashboardController < ApplicationController
                                    .group_by_month(:date, format: "%b/%y")
                                    .sum(:amount)
 
-    # Tabela comparativa — últimos 6 meses
     @comparison = (0..5).map do |offset|
       month_start = (Date.current.beginning_of_month - offset.months)
       month_range = month_start..month_start.end_of_month

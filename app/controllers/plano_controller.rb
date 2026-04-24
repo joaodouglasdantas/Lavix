@@ -12,6 +12,14 @@ class PlanoController < ApplicationController
     @this_month_expense = this_month_txn.expenses.sum(:amount)
     @this_month_balance = @this_month_income - @this_month_expense
 
+    @most_expensive_transaction = current_user.transactions
+                                              .expenses
+                                              .in_range(@this_month)
+                                              .joins(:category)
+                                              .includes(:category)
+                                              .order(amount: :desc)
+                                              .first
+
     @expenses_by_category_all = current_user.transactions
                                             .expenses
                                             .joins(:category)
@@ -19,6 +27,30 @@ class PlanoController < ApplicationController
                                             .sum(:amount)
                                             .map { |(name, color), total| { name: name, color: color, total: total } }
                                             .sort_by { |c| -c[:total] }
+
+    first_date = current_user.transactions.expenses.minimum(:date)
+    if first_date
+      evolution_range = first_date.beginning_of_month..Date.current.end_of_month
+
+      cat_info = current_user.transactions.expenses
+                             .joins(:category)
+                             .group("categories.name", "categories.color")
+                             .count
+                             .keys
+                             .map { |(name, color)| { name: name, color: color } }
+
+      @evolution_by_cat = cat_info.map do |cat|
+        data = current_user.transactions.expenses
+                           .joins(:category)
+                           .where(categories: { name: cat[:name] })
+                           .in_range(evolution_range)
+                           .group_by_month(:date, format: "%b/%y")
+                           .sum(:amount)
+        { name: cat[:name], color: cat[:color], data: data }
+      end.sort_by { |c| -c[:data].values.sum }
+    else
+      @evolution_by_cat = []
+    end
 
     @expenses_by_category_month = current_user.transactions
                                               .expenses
@@ -48,7 +80,6 @@ class PlanoController < ApplicationController
       end
     end
 
-    # Conta quantos dos últimos 3 meses têm dados reais
     @forecast_months_available = (1..3).count do |offset|
       month_start = (Date.current.beginning_of_month - offset.months)
       month_range = month_start..month_start.end_of_month
@@ -57,7 +88,6 @@ class PlanoController < ApplicationController
     @forecast_months_available = [@forecast_months_available, 1].max
 
     @forecast_next_month = category_data.map do |name, data|
-      # Divide pelo número real de meses com dados, não sempre por 3
       avg = data[:months].sum / data[:months].length.to_f
       {
         name:    name,
@@ -95,14 +125,13 @@ class PlanoController < ApplicationController
 
     @health_score = calculate_health_score
 
-    # Considera apenas meses que têm ao menos uma transação (sem exigir 6 meses completos)
     saving_data = (1..6).filter_map do |offset|
       month_start = (Date.current.beginning_of_month - offset.months)
       month_range = month_start..month_start.end_of_month
       txn = current_user.transactions.in_range(month_range)
       inc = txn.income.sum(:amount)
       exp = txn.expenses.sum(:amount)
-      next if inc == 0 && exp == 0  # pula meses sem nenhum dado
+      next if inc == 0 && exp == 0
       inc > 0 ? ((inc - exp) / inc.to_f * 100).round(1) : nil
     end.compact
 
@@ -115,7 +144,7 @@ class PlanoController < ApplicationController
   private
 
   def calculate_health_score
-    score = 50 # base
+    score = 50
 
     months_data = (1..3).map do |offset|
       month_start = (Date.current.beginning_of_month - offset.months)
@@ -143,13 +172,15 @@ class PlanoController < ApplicationController
   def generate_insights
     insights = []
 
-    if @expenses_by_category_month.any?
-      top = @expenses_by_category_month.first
+    if @most_expensive_transaction
+      label = @most_expensive_transaction.description.present? \
+                ? "\"#{@most_expensive_transaction.description}\"" \
+                : "um lançamento sem descrição"
       insights << {
         type:  :info,
-        icon:  "📊",
-        title: "Maior gasto do mês",
-        body:  "\"#{top[:name]}\" foi sua categoria com maior gasto este mês: #{number_to_currency_brl(top[:total])}."
+        icon:  "💸",
+        title: "Maior compra do mês",
+        body:  "#{label} foi sua compra mais cara: #{number_to_currency_brl(@most_expensive_transaction.amount)} em #{@most_expensive_transaction.category.name}."
       }
     end
 
