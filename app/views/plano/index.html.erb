@@ -300,11 +300,9 @@
     high_growth_count = @trends.count { |t| t[:delta] && t[:delta] > 20 }
     penalty = high_growth_count * 5
   %>
-  <div data-modal-target="overlay"
-       data-action="click->modal#closeOnBackdrop"
-       class="modal-overlay">
-
-    <div class="modal-panel">
+  <dialog data-modal-target="dialog"
+          data-action="click->modal#closeOnBackdrop"
+          class="lavix-modal">
 
       <div class="flex items-center justify-between px-6 py-4 border-b border-ink-700">
         <h2 class="text-base font-semibold text-ink-50">Como seu score é calculado</h2>
@@ -435,7 +433,7 @@
       </div>
 
     </div>
-  </div>
+  </dialog>
 
 </div>
 

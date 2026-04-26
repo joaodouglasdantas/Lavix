@@ -1,33 +1,28 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Modal genérico reutilizável.
+// Modal usando <dialog> nativo — sem dependência de CSS de transição.
 // Uso: data-controller="modal" no wrapper,
 //      data-action="modal#open" no gatilho,
-//      data-modal-target="overlay" no elemento raiz do modal.
+//      data-modal-target="dialog" no elemento <dialog>.
 export default class extends Controller {
-  static targets = ["overlay"]
-
-  connect() {
-    this._onKeydown = this._onKeydown.bind(this)
-  }
+  static targets = ["dialog"]
 
   open() {
-    this.overlayTarget.classList.add("is-open")
-    document.addEventListener("keydown", this._onKeydown)
-    document.body.style.overflow = "hidden"
+    this.dialogTarget.showModal()
   }
 
   close() {
-    this.overlayTarget.classList.remove("is-open")
-    document.removeEventListener("keydown", this._onKeydown)
-    document.body.style.overflow = ""
+    this.dialogTarget.close()
   }
 
+  // Fecha ao clicar fora do painel (no backdrop do <dialog>)
   closeOnBackdrop(event) {
-    if (event.target === this.overlayTarget) this.close()
-  }
-
-  _onKeydown(event) {
-    if (event.key === "Escape") this.close()
+    const rect = this.dialogTarget.getBoundingClientRect()
+    const clickedInside =
+      rect.top <= event.clientY &&
+      event.clientY <= rect.top + rect.height &&
+      rect.left <= event.clientX &&
+      event.clientX <= rect.left + rect.width
+    if (!clickedInside) this.dialogTarget.close()
   }
 }

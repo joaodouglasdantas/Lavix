@@ -150,24 +150,19 @@
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
 
-  /* Modal — overlay cobre toda a tela, invisível por padrão */
-  .modal-overlay {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.2s ease, visibility 0.2s ease;
-    @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/80;
+  /* Modal via <dialog> nativo */
+  dialog.lavix-modal {
+    background: #1a1f2e;
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    border-radius: 1rem;
+    padding: 0;
+    width: 100%;
+    max-width: 32rem;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+    color: #f8fafc;
   }
-  .modal-overlay.is-open {
-    visibility: visible;
-    opacity: 1;
-  }
-  /* Painel interno — entra com scale */
-  .modal-overlay .modal-panel {
-    transform: scale(0.95);
-    transition: transform 0.2s ease;
-    @apply w-full max-w-lg bg-ink-800 border border-ink-600/60 rounded-2xl shadow-2xl overflow-hidden;
-  }
-  .modal-overlay.is-open .modal-panel {
-    transform: scale(1);
+  dialog.lavix-modal::backdrop {
+    background: rgba(3, 7, 18, 0.8);
+    backdrop-filter: blur(2px);
   }
 }
