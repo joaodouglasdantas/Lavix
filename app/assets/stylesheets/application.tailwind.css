@@ -154,7 +154,20 @@
   .score-details-summary {
     cursor: pointer;
     list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
   }
   .score-details-summary::-webkit-details-marker { display: none; }
-  .score-details-summary::marker              { display: none; }
+  .score-details-summary::marker { display: none; }
+  .score-details-summary::before {
+    content: "▶";
+    font-size: 0.55rem;
+    display: inline-block;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+  details[open] .score-details-summary::before {
+    transform: rotate(90deg);
+  }
 }
