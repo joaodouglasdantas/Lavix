@@ -282,7 +282,7 @@
               <tr>
                 <td class="cell-truncate-flex">
                   <div class="inner">
-                    <span class="dot flex-shrink-0" style="background-color: <%= @category_colors_map&.dig(trend[:name]) || '#6B7280' %>;"></span>
+                    <span class="dot flex-shrink-0" style="background-color: <%= @category_colors_map[trend[:name]] || '#6B7280' %>;"></span>
                     <span class="font-medium" title="<%= trend[:name] %>"><%= trend[:name] %></span>
                   </div>
                 </td>

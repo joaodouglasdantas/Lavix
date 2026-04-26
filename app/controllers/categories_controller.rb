@@ -9,6 +9,11 @@ class CategoriesController < ApplicationController
     @total_pages  = [(@total_count / PER_PAGE.to_f).ceil, 1].max
     @current_page = params[:page].to_i.clamp(1, @total_pages)
     @categories   = scope.limit(PER_PAGE).offset((@current_page - 1) * PER_PAGE)
+
+    @transaction_counts = current_user.transactions
+                                      .where(category: @categories)
+                                      .group(:category_id)
+                                      .count
   end
 
   def show

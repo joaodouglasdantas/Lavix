@@ -41,7 +41,7 @@
               <td class="text-right whitespace-nowrap space-x-2">
                 <%= link_to "Editar", edit_category_path(category), class: "btn-secondary text-xs py-1 px-2" %>
                 <%
-                  txn_count = category.transactions.count
+                  txn_count   = @transaction_counts[category.id].to_i
                   confirm_msg = txn_count > 0 \
                     ? "Excluir \"#{category.name}\"? Isso também vai excluir #{txn_count} lançamento#{'s' if txn_count > 1} vinculado#{'s' if txn_count > 1} a ela. Essa ação não pode ser desfeita." \
                     : "Excluir a categoria \"#{category.name}\"?"
