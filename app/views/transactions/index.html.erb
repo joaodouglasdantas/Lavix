@@ -91,6 +91,12 @@
       </table>
     </div>
   </div>
+
+  <%= render "shared/pagination",
+        current_page: @current_page,
+        total_pages:  @total_pages,
+        total_count:  @total_count,
+        item_label:   "lançamentos" %>
 <% else %>
   <div class="card text-center py-16">
     <p class="text-ink-200">Nenhum lançamento encontrado.</p>

@@ -7,17 +7,28 @@ class DashboardController < ApplicationController
     @total_expense = transactions.expenses.sum(:amount)
     @balance       = @total_income - @total_expense
 
-    @expenses_by_category = current_user.transactions
-                                        .expenses
-                                        .in_range(@current_month)
-                                        .joins(:category)
-                                        .group("categories.name")
-                                        .sum(:amount)
+    PIE_MAX_SLICES = 6
+    raw_expenses = current_user.transactions
+                               .expenses
+                               .in_range(@current_month)
+                               .joins(:category)
+                               .group("categories.name")
+                               .sum(:amount)
+                               .sort_by { |_, v| -v }
+
+    if raw_expenses.size > PIE_MAX_SLICES
+      top    = raw_expenses.first(PIE_MAX_SLICES)
+      others = raw_expenses[PIE_MAX_SLICES..].sum { |_, v| v }
+      @expenses_by_category = top.to_h.merge("Outros" => others)
+    else
+      @expenses_by_category = raw_expenses.to_h
+    end
 
     @category_colors = current_user.categories
                                    .where(name: @expenses_by_category.keys)
                                    .pluck(:name, :color)
                                    .to_h
+    @category_colors["Outros"] ||= "#6B7280"
 
     range_12m = 11.months.ago.beginning_of_month..Date.current.end_of_month
 

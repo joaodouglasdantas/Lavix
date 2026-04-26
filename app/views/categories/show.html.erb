@@ -16,23 +16,42 @@
 <% if @recent_transactions.any? %>
   <div class="card p-0 overflow-hidden">
     <div class="table-scroll-wrapper">
-    <table class="table table-auto-fixed">
-      <thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th class="text-right">Valor</th></tr></thead>
-      <tbody>
-        <% @recent_transactions.each do |t| %>
+      <table class="table" style="min-width: 480px;">
+        <colgroup>
+          <col style="width:150px">
+          <col>
+          <col style="width:100px">
+          <col style="width:120px">
+        </colgroup>
+        <thead>
           <tr>
-            <td><%= l(t.date, format: :long) %></td>
-            <td><%= t.description.presence || "—" %></td>
-            <td>
-              <span class="<%= t.income? ? 'badge-income' : 'badge-expense' %>">
-                <%= t.income? ? "Receita" : "Despesa" %>
-              </span>
-            </td>
-            <td class="text-right font-mono"><%= brl(t.amount) %></td>
+            <th>Data</th>
+            <th>Descrição</th>
+            <th>Tipo</th>
+            <th class="text-right">Valor</th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @recent_transactions.each do |t| %>
+            <tr>
+              <td class="whitespace-nowrap text-sm"><%= l(t.date, format: :long) %></td>
+              <td class="cell-truncate">
+                <span title="<%= t.description.presence || '—' %>">
+                  <%= t.description.presence || "—" %>
+                </span>
+              </td>
+              <td>
+                <span class="<%= t.income? ? 'badge-income' : 'badge-expense' %>">
+                  <%= t.income? ? "Receita" : "Despesa" %>
+                </span>
+              </td>
+              <td class="text-right font-mono whitespace-nowrap <%= t.income? ? 'text-emerald-300' : 'text-red-300' %>">
+                <%= t.income? ? "+" : "−" %> <%= brl(t.amount) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
     </div>
   </div>
 <% else %>

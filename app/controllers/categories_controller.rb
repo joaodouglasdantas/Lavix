@@ -1,8 +1,14 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: %i[show edit update destroy]
 
+  PER_PAGE = 30
+
   def index
-    @categories = current_user.categories.alphabetical
+    scope         = current_user.categories.alphabetical
+    @total_count  = scope.count
+    @total_pages  = [(@total_count / PER_PAGE.to_f).ceil, 1].max
+    @current_page = params[:page].to_i.clamp(1, @total_pages)
+    @categories   = scope.limit(PER_PAGE).offset((@current_page - 1) * PER_PAGE)
   end
 
   def show

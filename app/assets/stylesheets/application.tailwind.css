@@ -144,4 +144,9 @@
 
   /* Link neon */
   .link-neon { @apply text-neon-400 hover:text-neon-300 underline-offset-4 hover:underline; }
+
+  /* Paginação — página ativa */
+  .pagination-active {
+    @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
+  }
 }

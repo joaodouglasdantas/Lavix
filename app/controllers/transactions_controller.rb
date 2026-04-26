@@ -1,13 +1,17 @@
 class TransactionsController < ApplicationController
   before_action :set_transaction, only: %i[show edit update destroy]
 
-  def index
-    @transactions = current_user.transactions
-                                .includes(:category)
-                                .recent
+  PER_PAGE = 25
 
-    @transactions = @transactions.where(kind: params[:kind]) if Transaction::KINDS.include?(params[:kind])
-    @transactions = @transactions.where(category_id: params[:category_id]) if params[:category_id].present?
+  def index
+    scope = current_user.transactions.includes(:category).recent
+    scope = scope.where(kind: params[:kind])               if Transaction::KINDS.include?(params[:kind])
+    scope = scope.where(category_id: params[:category_id]) if params[:category_id].present?
+
+    @total_count  = scope.count
+    @total_pages  = [(@total_count / PER_PAGE.to_f).ceil, 1].max
+    @current_page = params[:page].to_i.clamp(1, @total_pages)
+    @transactions = scope.limit(PER_PAGE).offset((@current_page - 1) * PER_PAGE)
   end
 
   def show
