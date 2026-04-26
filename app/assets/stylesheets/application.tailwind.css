@@ -150,15 +150,24 @@
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
 
-  /* Modal */
-  .modal-panel {
-    @apply transition-all duration-200 ease-out;
-  }
-  .modal-panel.opacity-0 {
+  /* Modal — overlay cobre toda a tela, invisível por padrão */
+  .modal-overlay {
+    visibility: hidden;
     opacity: 0;
-    transform: scale(0.95);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink-900/80;
   }
-  .modal-backdrop {
-    @apply transition-opacity duration-200 ease-out;
+  .modal-overlay.is-open {
+    visibility: visible;
+    opacity: 1;
+  }
+  /* Painel interno — entra com scale */
+  .modal-overlay .modal-panel {
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+    @apply w-full max-w-lg bg-ink-800 border border-ink-600/60 rounded-2xl shadow-2xl overflow-hidden;
+  }
+  .modal-overlay.is-open .modal-panel {
+    transform: scale(1);
   }
 }
