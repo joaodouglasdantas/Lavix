@@ -35,11 +35,28 @@
     <div class="card">
       <h2 class="card-title mb-4"><%= t("dashboard.expenses_by_category") %></h2>
       <% if @expenses_by_category.any? %>
-        <%= pie_chart @expenses_by_category,
-                      donut: true,
-                      colors: @expenses_by_category.keys.map { |k| @category_colors[k] || "#FF6B00" },
-                      library: { backgroundColor: "transparent" },
-                      height: "320px" %>
+        <% colors = @expenses_by_category.keys.map { |k| @category_colors[k] || "#FF6B00" } %>
+        <% if @expenses_by_category.size <= DashboardController::PIE_THRESHOLD %>
+          <%= pie_chart @expenses_by_category,
+                        donut: true,
+                        colors: colors,
+                        library: { backgroundColor: "transparent" },
+                        height: "320px" %>
+        <% else %>
+          <%# Muitas categorias: bar chart horizontal — todas visíveis e legíveis %>
+          <%= bar_chart @expenses_by_category,
+                        colors: colors,
+                        library: {
+                          indexAxis: "y",
+                          backgroundColor: "transparent",
+                          plugins: { legend: { display: false } },
+                          scales: {
+                            x: { ticks: { color: "#9CA3AF" }, grid: { color: "#374151" } },
+                            y: { ticks: { color: "#F9FAFB" }, grid: { display: false } }
+                          }
+                        },
+                        height: "#{[@expenses_by_category.size * 40, 320].max}px" %>
+        <% end %>
       <% else %>
         <p class="text-ink-200 text-sm">Sem despesas registradas neste mês.</p>
       <% end %>
