@@ -149,4 +149,16 @@
   .pagination-active {
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
+
+  /* Modal */
+  .modal-panel {
+    @apply transition-all duration-200 ease-out;
+  }
+  .modal-panel.opacity-0 {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  .modal-backdrop {
+    @apply transition-opacity duration-200 ease-out;
+  }
 }
