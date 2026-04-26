@@ -9,9 +9,6 @@ class DashboardController < ApplicationController
     @total_expense = transactions.expenses.sum(:amount)
     @balance       = @total_income - @total_expense
 
-    # Despesas por categoria, ordenadas do maior para o menor valor.
-    # Se houver mais de PIE_THRESHOLD categorias, a view exibe bar chart
-    # horizontal (todas visíveis) em vez do donut (que ficaria ilegível).
     @expenses_by_category = current_user.transactions
                                         .expenses
                                         .in_range(@current_month)

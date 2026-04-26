@@ -110,11 +110,21 @@
         <%
           chart_data   = @expenses_by_category_month.map { |c| [c[:name], c[:total]] }.to_h
           chart_colors = @expenses_by_category_month.map { |c| c[:color] }
+          many_cats    = @expenses_by_category_month.size > PlanoController::BAR_THRESHOLD
+          bar_height   = many_cats ? "#{[@expenses_by_category_month.size * 40, 280].max}px" : "280px"
         %>
         <%= bar_chart chart_data,
                       colors: chart_colors,
-                      height: "280px",
-                      library: { backgroundColor: "transparent", legend: { display: false } } %>
+                      height: bar_height,
+                      library: {
+                        backgroundColor: "transparent",
+                        indexAxis: (many_cats ? "y" : "x"),
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { ticks: { color: "#9CA3AF" }, grid: { color: "#374151" } },
+                          y: { ticks: { color: "#F9FAFB" }, grid: { display: !many_cats } }
+                        }
+                      } %>
       <% else %>
         <p class="text-ink-200 text-sm">Sem despesas registradas neste mês.</p>
       <% end %>
@@ -126,11 +136,21 @@
         <%
           forecast_data   = @forecast_next_month.map { |c| [c[:name], c[:average]] }.to_h
           forecast_colors = @forecast_next_month.map { |c| c[:color] }
+          many_forecast   = @forecast_next_month.size > PlanoController::BAR_THRESHOLD
+          forecast_height = many_forecast ? "#{[@forecast_next_month.size * 40, 280].max}px" : "280px"
         %>
         <%= bar_chart forecast_data,
                       colors: forecast_colors,
-                      height: "280px",
-                      library: { backgroundColor: "transparent", legend: { display: false } } %>
+                      height: forecast_height,
+                      library: {
+                        backgroundColor: "transparent",
+                        indexAxis: (many_forecast ? "y" : "x"),
+                        plugins: { legend: { display: false } },
+                        scales: {
+                          x: { ticks: { color: "#9CA3AF" }, grid: { color: "#374151" } },
+                          y: { ticks: { color: "#F9FAFB" }, grid: { display: !many_forecast } }
+                        }
+                      } %>
       <% else %>
         <p class="text-ink-200 text-sm">Dados insuficientes para previsão (necessário ao menos 1 mês anterior).</p>
       <% end %>
@@ -138,13 +158,18 @@
   </div>
 
   <div class="card mb-8">
-    <h2 class="card-title mb-1">Evolução de gastos por categoria</h2>
+    <div class="flex items-start justify-between gap-4 mb-1">
+      <h2 class="card-title">Evolução de gastos por categoria</h2>
+      <% if @evolution_cat_total > PlanoController::EVOLUTION_MAX_CATS %>
+        <span class="text-xs text-ink-400 whitespace-nowrap">
+          top <%= PlanoController::EVOLUTION_MAX_CATS %> de <%= @evolution_cat_total %> categorias
+        </span>
+      <% end %>
+    </div>
     <p class="text-xs text-ink-400 mb-4">Valor gasto por mês em cada categoria</p>
     <% if @evolution_by_cat.any? %>
       <%
-        chart_series = @evolution_by_cat.map do |cat|
-          { name: cat[:name], data: cat[:data] }
-        end
+        chart_series = @evolution_by_cat.map { |cat| { name: cat[:name], data: cat[:data] } }
         chart_colors = @evolution_by_cat.map { |c| c[:color] }
       %>
       <%= line_chart chart_series,
@@ -163,7 +188,13 @@
         <p class="text-xs text-ink-200 mt-1">Comparando último mês com o mês anterior</p>
       </div>
       <div class="table-scroll-wrapper">
-        <table class="table">
+        <table class="table" style="min-width: 520px;">
+          <colgroup>
+            <col>
+            <col style="width:130px">
+            <col style="width:130px">
+            <col style="width:110px">
+          </colgroup>
           <thead>
             <tr>
               <th>Categoria</th>
@@ -175,10 +206,15 @@
           <tbody>
             <% @trends.each do |trend| %>
               <tr>
-                <td class="font-medium"><%= trend[:name] %></td>
-                <td class="text-right font-mono text-ink-200"><%= brl(trend[:prev_month]) %></td>
-                <td class="text-right font-mono text-ink-50"><%= brl(trend[:last_month]) %></td>
-                <td class="text-right font-mono">
+                <td class="cell-truncate-flex">
+                  <div class="inner">
+                    <span class="dot flex-shrink-0" style="background-color: <%= @category_colors_map&.dig(trend[:name]) || '#6B7280' %>;"></span>
+                    <span class="font-medium" title="<%= trend[:name] %>"><%= trend[:name] %></span>
+                  </div>
+                </td>
+                <td class="text-right font-mono text-ink-200 whitespace-nowrap"><%= brl(trend[:prev_month]) %></td>
+                <td class="text-right font-mono text-ink-50 whitespace-nowrap"><%= brl(trend[:last_month]) %></td>
+                <td class="text-right font-mono whitespace-nowrap">
                   <% if trend[:delta].nil? %>
                     <span class="text-ink-200 text-xs">novo</span>
                   <% elsif trend[:delta] > 0 %>
@@ -204,7 +240,12 @@
         <p class="text-xs text-ink-200 mt-1">Baseada na média <%= @forecast_months_available == 1 ? "do último mês" : "dos últimos #{@forecast_months_available} meses" %> por categoria</p>
       </div>
       <div class="table-scroll-wrapper">
-        <table class="table">
+        <table class="table" style="min-width: 400px;">
+          <colgroup>
+            <col>
+            <col style="width:120px">
+            <col style="width:100px">
+          </colgroup>
           <thead>
             <tr>
               <th>Categoria</th>
@@ -215,21 +256,21 @@
           <tbody>
             <% @forecast_next_month.each do |cat| %>
               <tr>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <span class="dot" style="background-color: <%= cat[:color] %>; width:8px; height:8px;"></span>
-                    <%= cat[:name] %>
+                <td class="cell-truncate-flex">
+                  <div class="inner">
+                    <span class="dot flex-shrink-0" style="background-color: <%= cat[:color] %>;"></span>
+                    <span title="<%= cat[:name] %>"><%= cat[:name] %></span>
                   </div>
                 </td>
-                <td class="text-right font-mono text-neon-400"><%= brl(cat[:average]) %></td>
-                <td class="text-right font-mono text-ink-200">
+                <td class="text-right font-mono text-neon-400 whitespace-nowrap"><%= brl(cat[:average]) %></td>
+                <td class="text-right font-mono text-ink-200 whitespace-nowrap">
                   <%= @forecast_total > 0 ? "#{(cat[:average] / @forecast_total * 100).round(1)}%" : "—" %>
                 </td>
               </tr>
             <% end %>
             <tr class="border-t border-ink-600">
               <td class="font-semibold text-ink-50">Total previsto</td>
-              <td class="text-right font-mono font-semibold text-neon-400"><%= brl(@forecast_total) %></td>
+              <td class="text-right font-mono font-semibold text-neon-400 whitespace-nowrap"><%= brl(@forecast_total) %></td>
               <td class="text-right font-mono text-ink-200">100%</td>
             </tr>
           </tbody>

@@ -1,4 +1,7 @@
 class PlanoController < ApplicationController
+  BAR_THRESHOLD      = 6
+  EVOLUTION_MAX_CATS = 8
+
   def index
     @has_data = current_user.transactions.expenses.exists?
     return unless @has_data
@@ -39,7 +42,7 @@ class PlanoController < ApplicationController
                              .keys
                              .map { |(name, color)| { name: name, color: color } }
 
-      @evolution_by_cat = cat_info.map do |cat|
+      all_evolution = cat_info.map do |cat|
         data = current_user.transactions.expenses
                            .joins(:category)
                            .where(categories: { name: cat[:name] })
@@ -48,8 +51,12 @@ class PlanoController < ApplicationController
                            .sum(:amount)
         { name: cat[:name], color: cat[:color], data: data }
       end.sort_by { |c| -c[:data].values.sum }
+
+      @evolution_cat_total = all_evolution.size
+      @evolution_by_cat    = all_evolution.first(EVOLUTION_MAX_CATS)
     else
-      @evolution_by_cat = []
+      @evolution_by_cat    = []
+      @evolution_cat_total = 0
     end
 
     @expenses_by_category_month = current_user.transactions
@@ -60,6 +67,8 @@ class PlanoController < ApplicationController
                                               .sum(:amount)
                                               .map { |(name, color), total| { name: name, color: color, total: total } }
                                               .sort_by { |c| -c[:total] }
+
+    @category_colors_map = current_user.categories.pluck(:name, :color).to_h
 
     category_data = {}
 
