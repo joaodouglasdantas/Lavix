@@ -185,7 +185,7 @@ db/migrate/        # 3 migrations: users, categories, transactions
 Regras de negócio:
 - Cada usuário enxerga apenas seus próprios dados (escopo por `current_user`)
 - Categoria de um lançamento deve pertencer ao mesmo usuário
-- Categoria só pode ser excluída se não tiver lançamentos (`restrict_with_error`)
+- Excluir uma categoria também exclui todos os lançamentos vinculados a ela (dependent: :destroy)
 
 ---
 
