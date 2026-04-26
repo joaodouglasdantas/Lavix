@@ -1,4 +1,6 @@
 class DashboardController < ApplicationController
+  PIE_MAX_SLICES = 6
+
   def index
     @current_month = Date.current.beginning_of_month..Date.current.end_of_month
     transactions   = current_user.transactions.in_range(@current_month)
@@ -7,7 +9,6 @@ class DashboardController < ApplicationController
     @total_expense = transactions.expenses.sum(:amount)
     @balance       = @total_income - @total_expense
 
-    PIE_MAX_SLICES = 6
     raw_expenses = current_user.transactions
                                .expenses
                                .in_range(@current_month)
