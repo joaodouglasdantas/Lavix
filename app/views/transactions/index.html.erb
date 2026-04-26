@@ -81,7 +81,7 @@
               </td>
               <td class="text-right whitespace-nowrap space-x-1">
                 <%= link_to "Editar", edit_transaction_path(t), class: "btn-secondary text-xs py-1 px-2" %>
-                <%= button_to "×", transaction_path(t), method: :delete,
+                <%= button_to "Excluir", transaction_path(t), method: :delete,
                       class: "btn-danger text-xs py-1 px-2 inline-flex",
                       data: { turbo_confirm: "Excluir lançamento?" }, form: { class: "inline" } %>
               </td>
