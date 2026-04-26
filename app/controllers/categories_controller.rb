@@ -40,8 +40,12 @@ class CategoriesController < ApplicationController
   end
 
   def destroy
+    txn_count = @category.transactions.count
     if @category.destroy
-      redirect_to categories_path, notice: "Categoria excluída.", status: :see_other
+      notice = txn_count > 0 \
+        ? "Categoria excluída junto com #{txn_count} lançamento#{'s' if txn_count > 1}." \
+        : "Categoria excluída."
+      redirect_to categories_path, notice: notice, status: :see_other
     else
       redirect_to categories_path, alert: @category.errors.full_messages.to_sentence, status: :see_other
     end

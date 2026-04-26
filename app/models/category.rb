@@ -1,6 +1,6 @@
 class Category < ApplicationRecord
   belongs_to :user
-  has_many :transactions, dependent: :restrict_with_error
+  has_many :transactions, dependent: :destroy
 
   HEX_COLOR_REGEX = /\A#\h{6}\z/
 
