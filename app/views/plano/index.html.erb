@@ -9,57 +9,123 @@
 </div>
 
 <% if @has_data %>
-<div data-controller="modal">
 
   <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
 
-    <div class="card-accent flex flex-col justify-between">
-      <div class="flex items-center justify-between">
-        <div class="card-title">Score financeiro</div>
-        <button data-action="modal#open"
-                class="link-neon text-xs font-medium flex items-center gap-1"
-                title="Como o score é calculado?">
-          <span class="text-base leading-none">ⓘ</span> Como funciona?
-        </button>
-      </div>
-      <div class="mt-3 flex items-end gap-2">
-        <span class="text-5xl font-bold" style="color: <%= @health_score >= 70 ? '#4ade80' : @health_score >= 40 ? '#eab308' : '#f87171' %>">
-          <%= @health_score %>
-        </span>
+    <%
+      score_pct         = @health_score.clamp(0, 100)
+      score_color       = score_pct >= 70 ? '#4ade80' : score_pct >= 40 ? '#eab308' : '#f87171'
+      positive_months   = (1..3).count do |offset|
+        m = Date.current.beginning_of_month - offset.months
+        txn = current_user.transactions.in_range(m..m.end_of_month)
+        txn.income.sum(:amount) > txn.expenses.sum(:amount)
+      end
+      categories_bonus  = [current_user.transactions.expenses
+                             .in_range(3.months.ago..Date.current)
+                             .distinct.count(:category_id) * 2, 10].min
+      high_growth_count = @trends.count { |t| t[:delta] && t[:delta] > 20 }
+      penalty           = high_growth_count * 5
+    %>
+
+    <div class="card-accent flex flex-col">
+      <div class="card-title mb-3">Score financeiro</div>
+
+      <div class="flex items-end gap-2">
+        <span class="text-5xl font-bold" style="color: <%= score_color %>"><%= @health_score %></span>
         <span class="text-ink-400 text-sm mb-1">/100</span>
       </div>
 
       <div class="mt-4">
-        <%
-          score_pct  = @health_score.clamp(0, 100)
-          dot_color  = score_pct >= 70 ? '#4ade80' : score_pct >= 40 ? '#eab308' : '#f87171'
-        %>
         <div class="relative w-full h-1.5 rounded-full overflow-hidden">
           <div class="absolute inset-0" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%); opacity: 0.2;"></div>
           <div class="absolute inset-0" style="background: linear-gradient(to right, #ef4444 0%, #eab308 40%, #eab308 70%, #4ade80 100%); clip-path: inset(0 <%= 100 - score_pct %>% 0 0 round 9999px);"></div>
         </div>
         <div class="relative -mt-2 h-4 pointer-events-none">
           <div class="absolute w-3 h-3 rounded-full border-2 border-ink-900 shadow"
-               style="left: calc(<%= score_pct %>% - 6px); background-color: <%= dot_color %>;"></div>
+               style="left: calc(<%= score_pct %>% - 6px); background-color: <%= score_color %>;"></div>
         </div>
-
         <div class="relative mt-2 h-3">
           <div class="absolute w-px h-2 bg-ink-600" style="left: 40%;"></div>
           <div class="absolute w-px h-2 bg-ink-600" style="left: 70%;"></div>
         </div>
-        <div class="relative flex text-xs mt-0.5" style="color: #6b7280;">
-          <span style="width: 40%">Ruim</span>
-          <span style="width: 30%; text-align: center;">Regular</span>
-          <span style="width: 30%; text-align: right;">Bom</span>
+        <div class="relative flex text-xs mt-0.5 text-ink-400">
+          <span style="width:40%">Ruim</span>
+          <span style="width:30%;text-align:center">Regular</span>
+          <span style="width:30%;text-align:right">Bom</span>
         </div>
       </div>
 
       <p class="text-xs text-ink-300 mt-3">
-        <%= if score_pct >= 70 then "Saúde financeira boa"
-            elsif score_pct >= 40 then "Pode melhorar"
-            else "Atenção necessária"
-            end %>
+        <%= score_pct >= 70 ? "Saúde financeira boa" : score_pct >= 40 ? "Pode melhorar" : "Atenção necessária" %>
       </p>
+
+      <details class="score-details mt-4 pt-4 border-t border-ink-700">
+        <summary class="score-details-summary link-neon text-xs font-medium">
+          Como funciona?
+        </summary>
+
+        <div class="mt-4 space-y-4 text-xs">
+
+          <div class="space-y-1.5">
+            <p class="text-ink-400 font-semibold uppercase tracking-widest mb-2">Como o score é formado</p>
+
+            <div class="flex justify-between items-start gap-3 py-2 border-b border-ink-700">
+              <div>
+                <p class="text-ink-100 font-medium">Ponto de partida</p>
+                <p class="text-ink-400 mt-0.5">Todo usuário começa com 50 pontos.</p>
+              </div>
+              <span class="font-mono font-semibold text-ink-300 whitespace-nowrap">+50 pts</span>
+            </div>
+
+            <div class="flex justify-between items-start gap-3 py-2 border-b border-ink-700">
+              <div>
+                <p class="text-ink-100 font-medium">Meses no azul</p>
+                <p class="text-ink-400 mt-0.5">
+                  Cada mês dos últimos 3 em que receitas &gt; gastos vale +10 pts.
+                  Você teve <span class="text-ink-200 font-semibold"><%= positive_months %>/3</span> meses positivos.
+                </p>
+              </div>
+              <span class="font-mono font-semibold whitespace-nowrap <%= positive_months > 0 ? 'text-emerald-400' : 'text-ink-400' %>">
+                +<%= positive_months * 10 %> pts
+              </span>
+            </div>
+
+            <div class="flex justify-between items-start gap-3 py-2 border-b border-ink-700">
+              <div>
+                <p class="text-ink-100 font-medium">Organização</p>
+                <p class="text-ink-400 mt-0.5">Cada categoria usada nos últimos 3 meses vale +2 pts (máx. +10).</p>
+              </div>
+              <span class="font-mono font-semibold whitespace-nowrap <%= categories_bonus > 0 ? 'text-emerald-400' : 'text-ink-400' %>">
+                +<%= categories_bonus %> pts
+              </span>
+            </div>
+
+            <div class="flex justify-between items-start gap-3 py-2">
+              <div>
+                <% if high_growth_count > 0 %>
+                  <p class="text-red-300 font-medium">Gastos em alta (<%= high_growth_count %> categoria<%= high_growth_count > 1 ? 's' : '' %>)</p>
+                  <p class="text-ink-400 mt-0.5">Categoria com crescimento &gt;20% vs. mês anterior penaliza em −5 pts cada.</p>
+                <% else %>
+                  <p class="text-emerald-300 font-medium">Gastos sob controle</p>
+                  <p class="text-ink-400 mt-0.5">Nenhuma categoria com crescimento acima de 20%.</p>
+                <% end %>
+              </div>
+              <span class="font-mono font-semibold whitespace-nowrap <%= high_growth_count > 0 ? 'text-red-400' : 'text-emerald-400' %>">
+                −<%= penalty %> pts
+              </span>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-ink-700 space-y-1.5">
+            <p class="text-ink-400 font-semibold uppercase tracking-widest mb-2">Como melhorar</p>
+            <p class="text-ink-300 flex gap-2"><span class="text-neon-500 font-bold flex-shrink-0">→</span>Feche cada mês com receitas maiores que gastos (+10 pts/mês).</p>
+            <p class="text-ink-300 flex gap-2"><span class="text-neon-500 font-bold flex-shrink-0">→</span>Use categorias em todos os lançamentos (até +10 pts).</p>
+            <p class="text-ink-300 flex gap-2"><span class="text-neon-500 font-bold flex-shrink-0">→</span>Evite que uma categoria cresça mais de 20% num mês (−5 pts cada).</p>
+          </div>
+
+        </div>
+      </details>
+
     </div>
 
     <div class="card">
@@ -287,166 +353,6 @@
     </div>
   <% end %>
 
-  <%
-    score_pct = @health_score.clamp(0, 100)
-    positive_months = (1..3).count do |offset|
-      m = Date.current.beginning_of_month - offset.months
-      txn = current_user.transactions.in_range(m..m.end_of_month)
-      txn.income.sum(:amount) > txn.expenses.sum(:amount)
-    end
-    categories_bonus = [current_user.transactions.expenses
-                          .in_range(3.months.ago..Date.current)
-                          .distinct.count(:category_id) * 2, 10].min
-    high_growth_count = @trends.count { |t| t[:delta] && t[:delta] > 20 }
-    penalty = high_growth_count * 5
-  %>
-  <dialog data-modal-target="dialog"
-          data-action="click->modal#closeOnBackdrop"
-          class="lavix-modal">
-
-    <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid #27272A;">
-      <div>
-        <h2 class="text-base font-semibold text-ink-50">Score financeiro</h2>
-        <p class="text-xs text-ink-400 mt-0.5">Como seu número é calculado</p>
-      </div>
-      <button data-action="modal#close"
-              class="w-8 h-8 flex items-center justify-center rounded-lg text-ink-400 hover:text-ink-100 hover:bg-ink-700 transition text-lg leading-none">
-        &times;
-      </button>
-    </div>
-
-    <div class="px-6 py-5 space-y-5 overflow-y-auto" style="max-height: 65vh;">
-
-      <div class="flex items-center gap-4 p-4 rounded-xl" style="background: #1F1F23; border: 1px solid #27272A;">
-        <span class="text-5xl font-bold tabular-nums" style="color: <%= score_pct >= 70 ? '#4ade80' : score_pct >= 40 ? '#eab308' : '#f87171' %>">
-          <%= @health_score %>
-        </span>
-        <div>
-          <p class="text-sm font-semibold text-ink-50">
-            <%= score_pct >= 70 ? "Saúde financeira boa 🏆" : score_pct >= 40 ? "Pode melhorar ⚠️" : "Atenção necessária 🔴" %>
-          </p>
-          <p class="text-xs text-ink-400 mt-1">de 100 pontos possíveis</p>
-        </div>
-      </div>
-
-      <div>
-        <p class="text-xs font-semibold uppercase tracking-widest text-ink-400 mb-3">O que forma o seu score</p>
-        <div class="space-y-2">
-
-          <div class="flex items-start justify-between gap-4 px-4 py-3 rounded-lg" style="background: #1F1F23;">
-            <div class="min-w-0">
-              <p class="text-sm font-medium text-ink-100">Ponto de partida</p>
-              <p class="text-xs text-ink-400 mt-0.5">Todo usuário começa com 50 pontos — é o neutro.</p>
-            </div>
-            <span class="text-sm font-mono font-semibold text-ink-300 whitespace-nowrap">+50 pts</span>
-          </div>
-
-          <div class="flex items-start justify-between gap-4 px-4 py-3 rounded-lg" style="background: #1F1F23;">
-            <div class="min-w-0">
-              <p class="text-sm font-medium text-ink-100">Meses no azul</p>
-              <p class="text-xs text-ink-400 mt-0.5">
-                Cada mês dos últimos 3 em que você ganhou mais do que gastou vale +10 pts.
-                Você teve <span class="font-semibold text-ink-200"><%= positive_months %> de 3</span> meses positivos.
-              </p>
-            </div>
-            <span class="text-sm font-mono font-semibold whitespace-nowrap <%= positive_months > 0 ? 'text-emerald-400' : 'text-ink-400' %>">
-              +<%= positive_months * 10 %> pts
-            </span>
-          </div>
-
-          <div class="flex items-start justify-between gap-4 px-4 py-3 rounded-lg" style="background: #1F1F23;">
-            <div class="min-w-0">
-              <p class="text-sm font-medium text-ink-100">Organização</p>
-              <p class="text-xs text-ink-400 mt-0.5">
-                Cada categoria usada nos últimos 3 meses vale +2 pts (máximo +10).
-              </p>
-            </div>
-            <span class="text-sm font-mono font-semibold whitespace-nowrap <%= categories_bonus > 0 ? 'text-emerald-400' : 'text-ink-400' %>">
-              +<%= categories_bonus %> pts
-            </span>
-          </div>
-
-          <% if high_growth_count > 0 %>
-            <div class="flex items-start justify-between gap-4 px-4 py-3 rounded-lg" style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);">
-              <div class="min-w-0">
-                <p class="text-sm font-medium text-red-300">Gastos em alta</p>
-                <p class="text-xs text-ink-400 mt-0.5">
-                  <span class="font-semibold text-red-300"><%= high_growth_count %> <%= high_growth_count == 1 ? 'categoria' : 'categorias' %></span>
-                  com crescimento acima de 20% vs. mês anterior. Cada uma penaliza em −5 pts.
-                </p>
-              </div>
-              <span class="text-sm font-mono font-semibold text-red-400 whitespace-nowrap">−<%= penalty %> pts</span>
-            </div>
-          <% else %>
-            <div class="flex items-start justify-between gap-4 px-4 py-3 rounded-lg" style="background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.15);">
-              <div class="min-w-0">
-                <p class="text-sm font-medium text-emerald-300">Gastos sob controle</p>
-                <p class="text-xs text-ink-400 mt-0.5">Nenhuma categoria cresceu mais de 20% — sem penalidade.</p>
-              </div>
-              <span class="text-sm font-mono font-semibold text-emerald-400 whitespace-nowrap">−0 pts</span>
-            </div>
-          <% end %>
-
-        </div>
-      </div>
-
-      <div>
-        <p class="text-xs font-semibold uppercase tracking-widest text-ink-400 mb-3">O que cada faixa significa</p>
-        <div class="rounded-xl overflow-hidden" style="border: 1px solid #27272A;">
-          <div class="flex items-center gap-3 px-4 py-3 <%= score_pct >= 70 ? '' : '' %>" style="<%= score_pct >= 70 ? 'background: rgba(52,211,153,0.08);' : 'background: #1F1F23;' %> border-bottom: 1px solid #27272A;">
-            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-emerald-400"></span>
-            <div class="flex-1 min-w-0">
-              <span class="text-sm font-semibold <%= score_pct >= 70 ? 'text-emerald-300' : 'text-ink-300' %>">Bom</span>
-              <span class="text-xs text-ink-500 ml-2">70 – 100 pts</span>
-            </div>
-            <p class="text-xs text-ink-400 text-right">No caminho certo</p>
-          </div>
-          <div class="flex items-center gap-3 px-4 py-3" style="<%= score_pct >= 40 && score_pct < 70 ? 'background: rgba(234,179,8,0.07);' : 'background: #1F1F23;' %> border-bottom: 1px solid #27272A;">
-            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-yellow-400"></span>
-            <div class="flex-1 min-w-0">
-              <span class="text-sm font-semibold <%= score_pct >= 40 && score_pct < 70 ? 'text-yellow-300' : 'text-ink-300' %>">Regular</span>
-              <span class="text-xs text-ink-500 ml-2">40 – 69 pts</span>
-            </div>
-            <p class="text-xs text-ink-400 text-right">Pode melhorar</p>
-          </div>
-          <div class="flex items-center gap-3 px-4 py-3" style="<%= score_pct < 40 ? 'background: rgba(239,68,68,0.07);' : 'background: #1F1F23;' %>">
-            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0 bg-red-400"></span>
-            <div class="flex-1 min-w-0">
-              <span class="text-sm font-semibold <%= score_pct < 40 ? 'text-red-300' : 'text-ink-300' %>">Ruim</span>
-              <span class="text-xs text-ink-500 ml-2">0 – 39 pts</span>
-            </div>
-            <p class="text-xs text-ink-400 text-right">Atenção necessária</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="px-4 py-4 rounded-xl" style="background: rgba(255,107,0,0.06); border: 1px solid rgba(255,107,0,0.2);">
-        <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: #FF8515;">Como aumentar seu score</p>
-        <ul class="space-y-2">
-          <li class="flex gap-2.5 text-xs text-ink-300">
-            <span class="flex-shrink-0 font-bold" style="color: #FF6B00;">→</span>
-            Feche cada mês com receitas maiores que os gastos — vale +10 pts por mês.
-          </li>
-          <li class="flex gap-2.5 text-xs text-ink-300">
-            <span class="flex-shrink-0 font-bold" style="color: #FF6B00;">→</span>
-            Categorize todos os seus lançamentos — organização vale até +10 pts.
-          </li>
-          <li class="flex gap-2.5 text-xs text-ink-300">
-            <span class="flex-shrink-0 font-bold" style="color: #FF6B00;">→</span>
-            Evite que um gasto dispare mais de 20% num mês — cada categoria assim penaliza −5 pts.
-          </li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div class="px-6 py-4 flex justify-end" style="border-top: 1px solid #27272A;">
-      <button data-action="modal#close" class="btn-primary text-sm">Fechar</button>
-    </div>
-
-  </dialog>
-
-</div>
 
 <% else %>
   <div class="card-accent text-center py-20">

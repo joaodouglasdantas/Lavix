@@ -150,24 +150,11 @@
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
 
-  /* Modal via <dialog> nativo — paleta Lavix */
-  dialog.lavix-modal {
-    margin: auto;
-    padding: 0;
-    width: calc(100% - 2rem);
-    max-width: 32rem;
-    max-height: 90vh;
-    background: #18181B;                          /* ink-800 */
-    border: 1px solid rgba(255, 107, 0, 0.25);   /* neon-500 sutil */
-    border-radius: 1rem;
-    box-shadow:
-      0 0 0 1px rgba(255, 107, 0, 0.10),
-      0 25px 60px -10px rgba(0, 0, 0, 0.8);
-    color: #F4F4F5;                               /* ink-50 */
-    overflow: hidden;
+  /* Score details — <details>/<summary> no card do score */
+  .score-details-summary {
+    cursor: pointer;
+    list-style: none;
   }
-  dialog.lavix-modal::backdrop {
-    background: rgba(11, 11, 15, 0.85);           /* ink-900 */
-    backdrop-filter: blur(4px);
-  }
+  .score-details-summary::-webkit-details-marker { display: none; }
+  .score-details-summary::marker              { display: none; }
 }
