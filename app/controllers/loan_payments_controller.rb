@@ -16,7 +16,7 @@ class LoanPaymentsController < ApplicationController
 
   def destroy
     @payment = @loan.loan_payments.find(params[:id])
-    @payment.transaction&.destroy
+    @payment.linked_transaction&.destroy
     @payment.destroy
     @loan.sync_status!
     redirect_to @loan, notice: "Pagamento e despesa vinculada removidos.", status: :see_other
