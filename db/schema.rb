@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_18_120200) do
+ActiveRecord::Schema[7.1].define(version: 2026_05_04_100100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -22,6 +22,36 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_120200) do
     t.datetime "updated_at", null: false
     t.index ["user_id", "name"], name: "index_categories_on_user_id_and_name", unique: true
     t.index ["user_id"], name: "index_categories_on_user_id"
+  end
+
+  create_table "loan_payments", force: :cascade do |t|
+    t.bigint "loan_id", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.date "paid_on", null: false
+    t.integer "installment_number"
+    t.string "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["loan_id", "paid_on"], name: "index_loan_payments_on_loan_id_and_paid_on"
+    t.index ["loan_id"], name: "index_loan_payments_on_loan_id"
+  end
+
+  create_table "loans", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.string "kind", null: false
+    t.decimal "total_amount", precision: 12, scale: 2, null: false
+    t.decimal "interest_rate", precision: 5, scale: 2
+    t.integer "installments_count"
+    t.date "start_date", null: false
+    t.date "due_date"
+    t.string "status", default: "active", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "kind"], name: "index_loans_on_user_id_and_kind"
+    t.index ["user_id", "status"], name: "index_loans_on_user_id_and_status"
+    t.index ["user_id"], name: "index_loans_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -52,6 +82,8 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_18_120200) do
   end
 
   add_foreign_key "categories", "users"
+  add_foreign_key "loan_payments", "loans"
+  add_foreign_key "loans", "users"
   add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "users"
 end

@@ -10,6 +10,9 @@ Rails.application.routes.draw do
 
   resources :categories
   resources :transactions
+  resources :loans do
+    resources :loan_payments, only: %i[create destroy]
+  end
 
   get "up" => "rails/health#show", as: :rails_health_check
 

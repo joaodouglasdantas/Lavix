@@ -7,6 +7,7 @@ pt-BR:
     dashboard: "Dashboard"
     categories: "Categorias"
     transactions: "Lançamentos"
+    loans: "Empréstimos"
     plano: "Plano"
     sign_out: "Sair"
     sign_in: "Entrar"
@@ -37,6 +38,8 @@ pt-BR:
       user: "Usuário"
       category: "Categoria"
       transaction: "Lançamento"
+      loan: "Empréstimo"
+      loan_payment: "Pagamento"
     attributes:
       user:
         email: "E-mail"
@@ -51,7 +54,31 @@ pt-BR:
         description: "Descrição"
         date: "Data"
         category: "Categoria"
+      loan:
+        name: "Credor / Devedor"
+        kind: "Tipo"
+        total_amount: "Valor total"
+        interest_rate: "Taxa de juros (% a.m.)"
+        installments_count: "Número de parcelas"
+        start_date: "Data de início"
+        due_date: "Data de vencimento"
+        status: "Status"
+        notes: "Observações"
+      loan_payment:
+        amount: "Valor"
+        paid_on: "Data do pagamento"
+        installment_number: "Número da parcela"
+        notes: "Observações"
 
   transaction_kinds:
     income: "Receita"
     expense: "Despesa"
+
+  loan_kinds:
+    borrowed: "Tomado"
+    lent: "Concedido"
+
+  loan_statuses:
+    active: "Ativo"
+    paid: "Pago"
+    overdue: "Em atraso"

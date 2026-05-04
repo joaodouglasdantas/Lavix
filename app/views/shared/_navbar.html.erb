@@ -20,6 +20,8 @@
                 class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'transactions' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}" %>
           <%= link_to t("navigation.categories"), categories_path,
                 class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'categories' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}" %>
+          <%= link_to t("navigation.loans"), loans_path,
+                class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'loans' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}" %>
           <%= link_to t("navigation.plano"), plano_path,
                 class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'plano' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}" %>
         </nav>
@@ -58,6 +60,9 @@
                 data: { action: "click->mobile-menu#close" } %>
           <%= link_to t("navigation.categories"), categories_path,
                 class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'categories' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}",
+                data: { action: "click->mobile-menu#close" } %>
+          <%= link_to t("navigation.loans"), loans_path,
+                class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'loans' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}",
                 data: { action: "click->mobile-menu#close" } %>
           <%= link_to t("navigation.plano"), plano_path,
                 class: "px-3 py-2 rounded-md text-sm font-medium #{controller_name == 'plano' ? 'bg-ink-700 text-neon-400' : 'text-ink-100 hover:text-neon-400 hover:bg-ink-700'}",
