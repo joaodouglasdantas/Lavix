@@ -10,7 +10,7 @@
 
 <% if @has_data %>
 
-  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+  <div class="grid gap-4 grid-cols-2 lg:grid-cols-4 mb-8">
 
     <%
       score_pct         = @health_score.clamp(0, 100)
@@ -27,7 +27,7 @@
       penalty           = high_growth_count * 5
     %>
 
-    <div class="card-accent flex flex-col">
+    <div class="card-accent flex flex-col col-span-2 lg:col-span-1">
       <div class="card-title mb-3">Score financeiro</div>
 
       <div class="flex items-end gap-2">

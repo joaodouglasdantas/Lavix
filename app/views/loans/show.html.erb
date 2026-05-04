@@ -21,7 +21,7 @@
 </div>
 
 <!-- Resumo financeiro -->
-<div class="grid gap-4 sm:grid-cols-3 mb-6">
+<div class="grid gap-4 grid-cols-2 sm:grid-cols-3 mb-6">
   <div class="card">
     <div class="card-title">Valor total</div>
     <div class="card-value font-mono <%= @loan.borrowed? ? 'text-red-400' : 'text-emerald-400' %>">
@@ -32,7 +32,7 @@
     <div class="card-title">Total pago</div>
     <div class="card-value font-mono text-neon-400"><%= brl(@loan.amount_paid) %></div>
   </div>
-  <div class="card-accent">
+  <div class="card-accent col-span-2 sm:col-span-1">
     <div class="card-title">Restante</div>
     <div class="card-value font-mono <%= @loan.amount_remaining > 0 ? 'text-red-400' : 'text-emerald-400' %>">
       <%= brl(@loan.amount_remaining) %>
@@ -83,7 +83,7 @@
           </div>
         <% end %>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <%= f.label :amount, "Valor (R$)", class: "form-label" %>
             <%= f.number_field :amount, class: "form-input", step: "0.01", min: "0.01",

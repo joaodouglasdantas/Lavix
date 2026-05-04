@@ -54,7 +54,7 @@
     </div>
 
     <!-- Parcelas e datas -->
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div>
         <%= f.label :installments_count, "Nº de parcelas", class: "form-label" %>
         <%= f.number_field :installments_count, class: "form-input", min: "1", step: "1",
@@ -73,7 +73,7 @@
     <!-- Status -->
     <div>
       <%= f.label :status, "Status", class: "form-label" %>
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <label class="cursor-pointer">
           <%= f.radio_button :status, "active", class: "peer sr-only" %>
           <div class="rounded-lg border border-ink-500 bg-ink-700 px-3 py-2.5 text-center text-sm font-medium

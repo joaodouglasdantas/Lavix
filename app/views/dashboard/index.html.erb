@@ -13,7 +13,7 @@
 
 <% if @has_data %>
   <!-- KPI cards -->
-  <div class="grid gap-4 sm:grid-cols-3 mb-8">
+  <div class="grid gap-4 grid-cols-2 sm:grid-cols-3 mb-8">
     <div class="card">
       <div class="card-title">Receitas do mês</div>
       <div class="card-value text-emerald-400"><%= brl(@total_income) %></div>
@@ -22,7 +22,7 @@
       <div class="card-title">Despesas do mês</div>
       <div class="card-value text-red-400"><%= brl(@total_expense) %></div>
     </div>
-    <div class="card-accent">
+    <div class="card-accent col-span-2 sm:col-span-1">
       <div class="card-title">Saldo</div>
       <div class="card-value <%= @balance >= 0 ? 'text-neon-400' : 'text-red-400' %>">
         <%= brl(@balance) %>
