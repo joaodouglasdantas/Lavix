@@ -74,18 +74,27 @@
     <div>
       <%= f.label :status, "Status", class: "form-label" %>
       <div class="grid grid-cols-3 gap-3">
-        <% [["active", "Ativo", "text-neon-300", "border-neon-500", "bg-neon-500/10"],
-            ["overdue", "Em atraso", "text-red-300", "border-red-500", "bg-red-500/10"],
-            ["paid", "Pago", "text-emerald-300", "border-emerald-500", "bg-emerald-500/10"]].each do |val, label, tc, bc, bg| %>
-          <label class="cursor-pointer">
-            <%= f.radio_button :status, val, class: "peer sr-only" %>
-            <div class="rounded-lg border border-ink-500 bg-ink-700 px-3 py-2.5 text-center text-sm font-medium
-                        peer-checked:border-<%= bc.split('-')[1] %>-<%= bc.split('-')[2] %>
-                        peer-checked:<%= bg %> peer-checked:<%= tc %>">
-              <%= label %>
-            </div>
-          </label>
-        <% end %>
+        <label class="cursor-pointer">
+          <%= f.radio_button :status, "active", class: "peer sr-only" %>
+          <div class="rounded-lg border border-ink-500 bg-ink-700 px-3 py-2.5 text-center text-sm font-medium
+                      peer-checked:border-neon-500 peer-checked:bg-neon-500/10 peer-checked:text-neon-300">
+            Ativo
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <%= f.radio_button :status, "overdue", class: "peer sr-only" %>
+          <div class="rounded-lg border border-ink-500 bg-ink-700 px-3 py-2.5 text-center text-sm font-medium
+                      peer-checked:border-red-500 peer-checked:bg-red-500/10 peer-checked:text-red-300">
+            Em atraso
+          </div>
+        </label>
+        <label class="cursor-pointer">
+          <%= f.radio_button :status, "paid", class: "peer sr-only" %>
+          <div class="rounded-lg border border-ink-500 bg-ink-700 px-3 py-2.5 text-center text-sm font-medium
+                      peer-checked:border-emerald-500 peer-checked:bg-emerald-500/10 peer-checked:text-emerald-300">
+            Pago
+          </div>
+        </label>
       </div>
     </div>
 
