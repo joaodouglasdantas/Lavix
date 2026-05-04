@@ -150,6 +150,29 @@
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
 
+  /* Ícone de calendário nos inputs de data */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(55%) sepia(90%) saturate(700%) hue-rotate(360deg) brightness(105%);
+    cursor: pointer;
+    opacity: 0.85;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+  }
+
+  /* Setas dos inputs numéricos */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: auto;
+    filter: invert(55%) sepia(90%) saturate(700%) hue-rotate(360deg) brightness(105%);
+    opacity: 0.8;
+    cursor: pointer;
+  }
+  input[type="number"]::-webkit-inner-spin-button:hover,
+  input[type="number"]::-webkit-outer-spin-button:hover {
+    opacity: 1;
+  }
+
   /* Score details — <details>/<summary> no card do score */
   .score-details-summary {
     cursor: pointer;
