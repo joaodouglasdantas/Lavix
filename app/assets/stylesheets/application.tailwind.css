@@ -163,14 +163,17 @@
   /* Setas dos inputs numéricos */
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: auto;
-    filter: invert(55%) sepia(90%) saturate(700%) hue-rotate(360deg) brightness(105%);
-    opacity: 0.8;
+    -webkit-appearance: inner-spin-button;
+    background-color: rgba(255, 107, 0, 0.20);
+    border-left: 1px solid rgba(255, 107, 0, 0.35);
+    opacity: 1;
     cursor: pointer;
+    border-radius: 0 6px 6px 0;
+    transition: background-color 0.15s;
   }
   input[type="number"]::-webkit-inner-spin-button:hover,
   input[type="number"]::-webkit-outer-spin-button:hover {
-    opacity: 1;
+    background-color: rgba(255, 107, 0, 0.40);
   }
 
   /* Score details — <details>/<summary> no card do score */
