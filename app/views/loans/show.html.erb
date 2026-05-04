@@ -123,10 +123,15 @@
         <% @payments.each do |payment| %>
           <div class="py-3 flex items-center justify-between gap-4">
             <div class="min-w-0">
-              <div class="text-sm font-medium text-ink-50">
+              <div class="text-sm font-medium text-ink-50 flex flex-wrap items-center gap-2">
                 <%= l(payment.paid_on, format: :long) %>
                 <% if payment.installment_number.present? %>
-                  <span class="text-xs text-ink-300 ml-1">(parcela <%= payment.installment_number %>)</span>
+                  <span class="text-xs text-ink-300">(parcela <%= payment.installment_number %>)</span>
+                <% end %>
+                <% if payment.transaction_id.present? %>
+                  <span class="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded bg-red-500/10 text-red-300">
+                    ↓ despesa lançada
+                  </span>
                 <% end %>
               </div>
               <% if payment.notes.present? %>
@@ -137,7 +142,7 @@
               <span class="font-mono text-emerald-400 text-sm font-semibold"><%= brl(payment.amount) %></span>
               <%= button_to "×", loan_loan_payment_path(@loan, payment), method: :delete,
                     class: "text-red-400 hover:text-red-300 text-lg leading-none bg-transparent border-0 cursor-pointer p-1",
-                    data: { turbo_confirm: "Remover este pagamento?" },
+                    data: { turbo_confirm: "Remover este pagamento e a despesa vinculada?" },
                     form: { class: "inline" } %>
             </div>
           </div>

@@ -1,5 +1,6 @@
 class LoanPayment < ApplicationRecord
   belongs_to :loan
+  belongs_to :linked_transaction, class_name: "Transaction", foreign_key: "transaction_id", optional: true
 
   validates :amount,  presence: true, numericality: { greater_than: 0 }
   validates :paid_on, presence: true
