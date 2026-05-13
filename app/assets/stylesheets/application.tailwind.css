@@ -187,11 +187,12 @@
   .score-details-summary::-webkit-details-marker { display: none; }
   .score-details-summary::marker { display: none; }
   .score-details-summary::before {
-    content: "▶";
+    content: "▶\FE0E";
     font-size: 0.55rem;
     display: inline-block;
     transition: transform 0.2s ease;
     flex-shrink: 0;
+    color: #FF8515;
   }
   details[open] .score-details-summary::before {
     transform: rotate(90deg);
