@@ -58,7 +58,6 @@ class Loan < ApplicationRecord
     loan_payments.count
   end
 
-  # Marca automaticamente como pago se o valor restante for zero
   def sync_status!
     return if paid?
 
