@@ -1,6 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Faz o flash sumir suavemente após alguns segundos
 export default class extends Controller {
   static targets = ["message"]
 

@@ -18,7 +18,6 @@
 }
 
 @layer components {
-  /* Botões */
   .btn {
     @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium
            transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-ink-900 disabled:opacity-50;
@@ -36,7 +35,6 @@
     @apply btn bg-transparent text-ink-100 hover:bg-ink-700;
   }
 
-  /* Cards */
   .card {
     @apply rounded-xl bg-ink-800/60 backdrop-blur border border-ink-600/50 p-5 shadow-lg;
   }
@@ -50,7 +48,6 @@
     @apply mt-2 text-3xl font-bold text-ink-50;
   }
 
-  /* Formulários */
   .form-label {
     @apply block text-sm font-medium text-ink-100 mb-1;
   }
@@ -63,7 +60,6 @@
   .form-hint  { @apply mt-1 text-xs text-ink-200; }
   .form-error { @apply mt-1 text-xs text-red-400; }
 
-  /* Tabelas */
   .table {
     @apply w-full text-sm text-left border-collapse;
   }
@@ -123,29 +119,24 @@
     cursor: help;
   }
 
-  /* Badges */
   .badge {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   .badge-income  { @apply badge bg-emerald-500/15 text-emerald-300 border border-emerald-500/30; }
   .badge-expense { @apply badge bg-red-500/15 text-red-300 border border-red-500/30; }
 
-  /* Pontinho colorido para categorias */
   .dot {
     @apply inline-block h-2.5 w-2.5 rounded-full ring-2 ring-ink-800;
   }
 
-  /* Flash */
   .flash {
     @apply rounded-lg border px-4 py-3 text-sm;
   }
   .flash-notice { @apply flash bg-neon-500/10 border-neon-500/30 text-neon-100; }
   .flash-alert  { @apply flash bg-red-500/10 border-red-500/30 text-red-200; }
 
-  /* Link neon */
   .link-neon { @apply text-neon-400 hover:text-neon-300 underline-offset-4 hover:underline; }
 
-  /* Paginação — página ativa */
   .pagination-active {
     @apply bg-neon-500 text-ink-900 border-neon-500 hover:bg-neon-400;
   }
@@ -195,6 +186,4 @@
     color: #FF8515;
   }
   details[open] .score-details-summary::before {
-    transform: rotate(90deg);
-  }
-}
+    transfo
